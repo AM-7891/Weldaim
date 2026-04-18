@@ -265,10 +265,12 @@ const DATA=[
     ]},
     {n:'Sprint B — prima risposta Claude',dot:'#00c9a7',d:'~1 sett.',tasks:[
       {id:'b1',t:'pip install anthropic nel terminale VS Code',n:'Prima libreria del progetto',pc:'home'},
-      {id:'b2',t:'Script "hello world" — Claude risponde nel terminale',n:'~15 righe commentate',pc:'home'},
+      {id:'b2',t:'Script hello world — Claude risponde nel terminale',n:'15 righe commentate riga per riga',pc:'home'},
       {id:'b3',t:'MILESTONE: prima risposta API ricevuta',n:'Momento storico!',pc:'ms'},
-      {id:'b4',t:'Studiare "Messages API" e "Prompt Engineering"',n:'docs.claude.ai',pc:'work'},
-      {id:'b5',t:'Esercizio: 3 domande diverse a Claude via codice',n:'Osservare come cambia la risposta',pc:'home'},
+      {id:'b4',t:'Corso: Making a request + Multi-Turn conversations',n:'skilljar.com — Sezione: Accessing Claude with the API',pc:'work'},
+      {id:'b5',t:'Corso: System prompts + System prompts exercise',n:'skilljar.com — Sezione: Accessing Claude with the API',pc:'work'},
+      {id:'b6',t:'Corso: Temperature + Response streaming + Structured data',n:'skilljar.com — Quiz finale sezione API',pc:'work'},
+      {id:'b7',t:'Esercizio: 3 domande diverse a Claude via codice',n:'Cambia temperature e osserva come cambia la risposta',pc:'home'},
     ]},
    ]},
   {id:'m2',title:'RAG — Claude legge i PDF normativi',badge:'b-next',bl:'PROSSIMO',weeks:'Sett. 3–6',col:'#4d9fff',gs:2,gl:4,
@@ -277,7 +279,7 @@ const DATA=[
       {id:'c1',t:'pip install pymupdf — libreria lettura PDF',n:'Gratuita, gira in locale',pc:'home'},
       {id:'c2',t:'Script che estrae testo dal QT.6495.022',n:'Test: stampa prime 500 parole',pc:'home'},
       {id:'c3',t:'Inviare testo a Claude e fare una domanda',n:'Es: "cosa richiede CL1?"',pc:'home'},
-      {id:'c4',t:'Studiare "Documents e long context"',n:'docs.claude.ai',pc:'work'},
+      {id:'c4',t:'Corso: Prompt engineering + Being clear + XML tags + Providing examples',n:'skilljar.com — Sezione: Prompt engineering techniques',pc:'work'},
     ]},
     {n:'Sprint D — database vettoriale RAG',dot:'#4d9fff',d:'~2.5 sett.',tasks:[
       {id:'d1',t:'pip install chromadb — DB vettoriale locale gratuito',n:'Zero costi, gira sul tuo PC',pc:'home'},
@@ -285,13 +287,14 @@ const DATA=[
       {id:'d3',t:'Salvare chunk nel database vettoriale',n:'I documenti diventano interrogabili',pc:'home'},
       {id:'d4',t:'Query: trova chunk rilevanti per una domanda',n:'Es: "requisiti mock-up" → paragrafo esatto',pc:'home'},
       {id:'d5',t:'MILESTONE: Claude risponde citando paragrafo sorgente',n:'Cuore del prodotto',pc:'ms'},
-      {id:'d6',t:'Studiare "Tool use" e "Embeddings"',n:'docs.claude.ai',pc:'work'},
+      {id:'d6',t:'Corso: Introducing RAG + Text chunking + Text embeddings + Full RAG flow',n:'skilljar.com — Sezione: RAG and Agentic Search',pc:'work'},
     ]},
    ]},
   {id:'m3',title:'5 agenti specializzati Welding Book',badge:'b-next',bl:'FASE 3',weeks:'Sett. 7–10',col:'#9b78ff',gs:6,gl:4,
    sprints:[
     {n:'Fondamenta — architettura multi-agente',dot:'#9b78ff',d:'studio',tasks:[
-      {id:'e0',t:'Studiare architettura multi-agente Claude',n:'docs.claude.ai — sezione Agents',pc:'work'},
+      {id:'e0',t:'Corso: Introducing tool use + Tool functions + Tool schemas',n:'skilljar.com — Sezione: Tool use with Claude',pc:'work'},
+      {id:'e0b',t:'Corso: Agents and workflows + Parallelization + Chaining + Routing',n:'skilljar.com — Sezione: Agents and workflows',pc:'work'},
     ]},
     {n:'Agente 1 — WPS + WPQR (cartelle 01–02)',dot:'#9b78ff',d:'~1 sett.',tasks:[
       {id:'e1',t:'Verifica corrispondenza 1:1 WPS/WPQR',n:'ISO 15609-1 + QT.6495.024 §1–2',pc:'home'},
@@ -438,7 +441,12 @@ function buildGantt(){
 }
 
 function loadState(){
+  // Task completati confermati — Sprint A completato al 100%
+  const COMPLETED=['a1','a2','a3','a4','a5'];
   const sv=JSON.parse(localStorage.getItem('weldai_v3')||'{}');
+  // Pre-spunta i task completati se non già salvati
+  COMPLETED.forEach(id=>{ if(!(id in sv)) sv[id]=true; });
+  localStorage.setItem('weldai_v3',JSON.stringify(sv));
   DATA.forEach(m=>m.sprints.forEach(s=>s.tasks.forEach(t=>{
     if(sv[t.id]){
       const cb=document.getElementById('cb-'+t.id);
