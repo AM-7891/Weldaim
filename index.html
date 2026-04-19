@@ -4,146 +4,127 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="WeldAI">
-<meta name="theme-color" content="#0a0e1a">
-<title>WeldAI — Sprint 1 Roadmap</title>
+<meta name="apple-mobile-web-app-title" content="WeldAIM">
+<meta name="theme-color" content="#1c2333">
+<title>WeldAIM — Piano Operativo Modulo 1</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 :root {
-  --bg0:#0a0e1a; --bg1:#111827; --bg2:#1a2235; --bg3:#222d42;
-  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
-  --text:#dde3f0; --text2:#7b8ea8; --text3:#3d4f66;
-  --teal:#00c9a7; --teal2:#009e83; --teal-glow:rgba(0,201,167,0.15);
-  --blue:#4d9fff; --blue-glow:rgba(77,159,255,0.12);
-  --purple:#9b78ff; --purple-glow:rgba(155,120,255,0.12);
-  --amber:#f0a030; --amber-glow:rgba(240,160,48,0.12);
-  --pink:#e0608a; --pink-glow:rgba(224,96,138,0.12);
-  --green:#28c97a; --red:#f05555;
+  --bg0:#1c2333; --bg1:#242f45; --bg2:#2d3a52; --bg3:#364560;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.15);
+  --text:#dde3f0; --text2:#8a9ab5; --text3:#4a5a72;
+  --teal:#007a65; --teal2:#005a4a; --teal-glow:rgba(0,122,101,0.08);
+  --blue:#1a6db5; --blue-glow:rgba(26,109,181,0.08);
+  --purple:#6040b5; --purple-glow:rgba(96,64,181,0.08);
+  --amber:#b56e00; --amber-glow:rgba(181,110,0,0.08);
+  --pink:#b5305a; --pink-glow:rgba(181,48,90,0.08);
+  --green:#1a8a4a; --red:#c0392b;
+  --course:#7b3fa0; --course-glow:rgba(123,63,160,0.08);
   --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:20px;
+  --shadow:0 1px 4px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.6}
-::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg1)} ::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
+html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:15px;line-height:1.6}
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg0)} ::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
 
-/* ── LAYOUT ── */
-.app{max-width:720px;margin:0 auto;padding:1.5rem 1rem 5rem}
+.app{max-width:760px;margin:0 auto;padding:1.5rem 1rem 5rem}
 
-/* ── HEADER ── */
+/* HEADER */
 .header{margin-bottom:1.75rem}
 .brand-row{display:flex;align-items:center;gap:10px;margin-bottom:.6rem}
-.brand-badge{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.12em;color:var(--teal);background:var(--teal-glow);border:.5px solid rgba(0,201,167,.25);padding:3px 10px;border-radius:20px}
-.header h1{font-size:24px;font-weight:600;letter-spacing:-.5px;line-height:1.2}
+.brand-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.12em;color:var(--teal);background:var(--teal-glow);border:.5px solid rgba(0,122,101,.25);padding:3px 10px;border-radius:20px}
+.header h1{font-size:24px;font-weight:600;letter-spacing:-.5px;line-height:1.2;color:var(--text)}
 .header h1 em{color:var(--teal);font-style:normal}
 .header-sub{font-size:13px;color:var(--text2);margin-top:5px;font-weight:300}
 
-/* ── STATS ── */
+/* STATS */
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1.5rem}
 @media(min-width:480px){.stats{grid-template-columns:repeat(4,1fr)}}
-.stat{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r-md);padding:.9rem 1rem}
-.stat-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:6px}
-.stat-val{font-size:20px;font-weight:500;font-family:'JetBrains Mono',monospace;color:var(--teal)}
-.stat-val.plain{color:var(--text);font-size:13px;padding-top:3px;font-family:'Space Grotesk',sans-serif}
-.prog-track{height:3px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.stat{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-md);padding:.9rem 1rem;box-shadow:var(--shadow)}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:6px}
+.stat-val{font-size:20px;font-weight:500;font-family:'IBM Plex Mono',monospace;color:var(--teal)}
+.stat-val.plain{color:var(--text);font-size:13px;padding-top:3px;font-family:'IBM Plex Sans',sans-serif}
+.prog-track{height:3px;background:var(--bg3);border-radius:2px;margin-top:8px;overflow:hidden}
 .prog-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
 
-/* ── LEGEND ── */
-.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-bottom:1.5rem;padding:.75rem 1rem;background:var(--bg1);border-radius:var(--r-md);border:.5px solid var(--border)}
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-bottom:1.5rem;padding:.75rem 1rem;background:var(--bg1);border-radius:var(--r-md);border:.5px solid var(--border);box-shadow:var(--shadow)}
 .leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
 .leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
-/* ── MILESTONE ── */
-.msec{margin-bottom:.85rem;border:.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--bg1)}
+/* CORSO BANNER */
+.corso-banner{background:var(--bg1);border:.5px solid rgba(123,63,160,.3);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;box-shadow:var(--shadow)}
+.corso-title{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--course);letter-spacing:.1em;margin-bottom:.6rem}
+.corso-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:.6rem}
+.corso-note{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;padding:.5rem .75rem;background:var(--course-glow);border-radius:6px;border-left:2px solid var(--course)}
+
+/* MILESTONE SECTIONS */
+.msec{margin-bottom:.85rem;border:.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--bg1);box-shadow:var(--shadow)}
 .mhead{display:flex;align-items:center;gap:8px;padding:.9rem 1rem;cursor:pointer;user-select:none;transition:background .15s}
 .mhead:hover,.mhead:active{background:var(--bg2)}
-.mnum{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);min-width:22px}
+.mnum{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);min-width:22px}
 .mname{font-size:14px;font-weight:500;flex:1;color:var(--text)}
-.mbadge{font-size:9px;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:.04em}
-.b-now{background:rgba(40,201,122,.1);color:var(--green);border:.5px solid rgba(40,201,122,.3)}
-.b-next{background:var(--blue-glow);color:var(--blue);border:.5px solid rgba(77,159,255,.3)}
-.b-fut{background:var(--bg3);color:var(--text3);border:.5px solid var(--border)}
-.b-site{background:var(--pink-glow);color:var(--pink);border:.5px solid rgba(224,96,138,.3)}
-.mwks{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;white-space:nowrap}
-.mpct{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--teal);min-width:36px;text-align:right}
+.mbadge{font-size:9px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:.04em}
+.b-now{background:rgba(26,138,74,.1);color:var(--green);border:.5px solid rgba(26,138,74,.3)}
+.b-next{background:var(--blue-glow);color:var(--blue);border:.5px solid rgba(26,109,181,.3)}
+.b-fut{background:var(--bg3);color:var(--text3);border:.5px solid var(--border2)}
+.b-site{background:var(--pink-glow);color:var(--pink);border:.5px solid rgba(181,48,90,.3)}
+.b-corso{background:var(--course-glow);color:var(--course);border:.5px solid rgba(123,63,160,.3)}
+.mwks{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.mpct{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--teal);min-width:36px;text-align:right}
 .mchev{font-size:10px;color:var(--text3);transition:transform .2s;margin-left:2px;flex-shrink:0}
 .msec.closed .mchev{transform:rotate(-90deg)}
 .msec.closed .mbody{display:none}
-
 .mbody{border-top:.5px solid var(--border)}
 .sprint{padding:.75rem 1rem;border-bottom:.5px solid var(--border)}
 .sprint:last-child{border-bottom:none}
 .sprint-hd{display:flex;align-items:center;gap:7px;margin-bottom:.5rem}
 .sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .sname{font-size:12px;font-weight:500;flex:1;color:var(--text2)}
-.sdur{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace}
+.sdur{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
 
-/* ── TASK ── */
+/* TASK */
 .task{display:flex;align-items:flex-start;gap:9px;padding:6px 0 6px 14px;border-radius:6px;cursor:pointer;transition:background .12s}
 .task:hover,.task:active{background:var(--bg2)}
 .task input[type=checkbox]{margin-top:3px;flex-shrink:0;width:14px;height:14px;accent-color:var(--teal);cursor:pointer}
 .task-body{flex:1;min-width:0}
 .task-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.task-text{font-size:13px;line-height:1.4}
+.task-text{font-size:13px;line-height:1.4;color:var(--text)}
 .task.done .task-text{color:var(--text3);text-decoration:line-through}
-.task-note{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tag{font-size:9px;padding:1px 6px;border-radius:8px;font-family:'JetBrains Mono',monospace;white-space:nowrap;flex-shrink:0;letter-spacing:.02em}
-.t-home{background:rgba(0,201,167,.1);color:var(--teal)}
+.task-note{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:9px;padding:1px 6px;border-radius:8px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0;letter-spacing:.02em}
+.t-home{background:rgba(0,122,101,.1);color:var(--teal)}
 .t-work{background:var(--blue-glow);color:var(--blue)}
 .t-both{background:var(--amber-glow);color:var(--amber)}
 .t-ms{background:var(--pink-glow);color:var(--pink)}
+.t-corso{background:var(--course-glow);color:var(--course)}
 
-/* ── GANTT ── */
-.gantt-box{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1rem;margin-bottom:1.25rem;overflow-x:auto}
-.gantt-sec-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:.85rem}
+/* CORSO task speciale */
+.task.corso-task{background:rgba(123,63,160,0.03);border-left:2px solid rgba(123,63,160,0.2)}
+.task.corso-task:hover{background:var(--course-glow)}
+
+/* GANTT */
+.gantt-box{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1rem;margin-bottom:1.25rem;overflow-x:auto;box-shadow:var(--shadow)}
+.gantt-sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:.85rem}
 .gwks{display:flex;gap:0;margin-bottom:4px;padding-left:110px}
-.gwk{font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text3);flex:1;text-align:center;min-width:0}
+.gwk{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text3);flex:1;text-align:center;min-width:0}
 .grow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.glbl{font-size:10px;color:var(--text2);font-family:'JetBrains Mono',monospace;min-width:102px;flex-shrink:0;white-space:nowrap}
-.gtrack{flex:1;height:18px;background:var(--bg2);border-radius:3px;position:relative;min-width:0}
-.gbar{position:absolute;top:2px;height:14px;border-radius:2px;display:flex;align-items:center;padding:0 5px;font-size:9px;font-family:'JetBrains Mono',monospace;white-space:nowrap;overflow:hidden}
+.glbl{font-size:10px;color:var(--text2);font-family:'IBM Plex Mono',monospace;min-width:102px;flex-shrink:0;white-space:nowrap}
+.gtrack{flex:1;height:18px;background:var(--bg2);border-radius:3px;position:relative;min-width:0;border:.5px solid var(--border)}
+.gbar{position:absolute;top:2px;height:14px;border-radius:2px;display:flex;align-items:center;padding:0 5px;font-size:9px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;overflow:hidden}
 
-/* ── TIMER ── */
-.timer-card{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.25rem}
-.timer-sec-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:1rem}
-.sess-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
-.sess{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r-md);padding:.8rem;cursor:pointer;transition:all .15s}
-.sess:hover,.sess:active{border-color:var(--border2)}
-.sess.on{border-color:var(--teal);background:var(--teal-glow)}
-.sess-name{font-size:13px;font-weight:500;margin-bottom:3px}
-.sess-info{font-size:11px;color:var(--text2);font-family:'JetBrains Mono',monospace}
-.sess-pc{font-size:10px;margin-top:4px}
-.tdisp{text-align:center;padding:.75rem 0}
-.tclock{font-size:44px;font-weight:500;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;transition:color .3s}
-.tclock.idle{color:var(--text)}
-.tclock.run{color:var(--teal)}
-.tclock.fin{color:var(--green)}
-.tlbl{font-size:12px;color:var(--text2);margin-top:4px}
-.tbtns{display:flex;gap:8px;justify-content:center;margin-top:.85rem}
-.tbtn{padding:7px 20px;border:.5px solid var(--border2);border-radius:var(--r-md);background:transparent;color:var(--text);font-size:13px;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .15s;font-weight:500}
-.tbtn:hover,.tbtn:active{background:var(--bg3)}
-.tbtn.pri{background:var(--teal-glow);color:var(--teal);border-color:rgba(0,201,167,.3)}
-
-/* ── NOTIFICHE ── */
-.notif-card{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.25rem}
-.nrow{display:flex;align-items:center;gap:10px;padding:.6rem .75rem;background:var(--bg2);border-radius:var(--r-md);margin-bottom:.5rem;border:.5px solid var(--border)}
-.nrow:last-child{margin-bottom:0}
-.nicon{font-size:15px;flex-shrink:0;width:20px;text-align:center}
-.ntxt{flex:1;font-size:13px}
-.ntxt small{display:block;font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-top:1px}
-.ntog{accent-color:var(--teal);width:16px;height:16px;cursor:pointer;flex-shrink:0}
-
-/* ── PWA INSTALL BANNER ── */
-.install-banner{display:none;background:var(--teal-glow);border:.5px solid rgba(0,201,167,.3);border-radius:var(--r-md);padding:.85rem 1rem;margin-bottom:1.25rem;align-items:center;gap:10px}
+/* INSTALL BANNER */
+.install-banner{display:none;background:var(--teal-glow);border:.5px solid rgba(0,122,101,.3);border-radius:var(--r-md);padding:.85rem 1rem;margin-bottom:1.25rem;align-items:center;gap:10px}
 .install-banner.show{display:flex}
 .install-text{flex:1;font-size:13px}
 .install-text strong{color:var(--teal)}
-.ibtn{padding:5px 14px;background:var(--teal);color:#0a0e1a;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.ibtn{padding:5px 14px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif}
 .ibtn-close{background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;flex-shrink:0}
 
-/* ── FOOTER ── */
-.footer-note{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-md);padding:.85rem 1rem;font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:1rem}
+/* FOOTER */
+.footer-note{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-md);padding:.85rem 1rem;font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:1rem;box-shadow:var(--shadow)}
 .footer-note strong{color:var(--teal)}
-.reset-btn{background:transparent;border:.5px solid var(--border2);color:var(--text3);padding:4px 12px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all .15s;display:block;margin:0 auto}
+.reset-btn{background:transparent;border:.5px solid var(--border2);color:var(--text3);padding:4px 12px;border-radius:6px;font-size:11px;font-family:'IBM Plex Mono',monospace;cursor:pointer;transition:all .15s;display:block;margin:0 auto}
 .reset-btn:hover{border-color:var(--text2);color:var(--text2)}
 </style>
 </head>
@@ -161,7 +142,7 @@ html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'
 <div class="header">
   <div class="brand-row">
     <span class="brand-badge">WELDAIM.AI</span>
-    <span class="brand-badge" style="color:var(--blue);background:var(--blue-glow);border-color:rgba(77,159,255,.25)">MODULO 1</span>
+    <span class="brand-badge" style="color:var(--blue);background:var(--blue-glow);border-color:rgba(26,109,181,.25)">MODULO 1</span>
   </div>
   <h1>Welding Book <em>Agent</em></h1>
   <div class="header-sub">Piano operativo · avviato <span id="start-date"></span></div>
@@ -181,6 +162,14 @@ html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'
   <div class="leg"><div class="leg-dot" style="background:var(--blue)"></div>PC lavoro (pranzo)</div>
   <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>Entrambi</div>
   <div class="leg"><div class="leg-dot" style="background:var(--pink)"></div>Milestone</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--course)"></div>Corso API</div>
+</div>
+
+<!-- CORSO BANNER -->
+<div class="corso-banner">
+  <div class="corso-title">📚 CORSO IN PARALLELO — BUILDING WITH THE CLAUDE API</div>
+  <div class="corso-desc">I moduli del corso Anthropic Academy sono integrati nel piano di sviluppo. Ogni lezione teorica è abbinata al task pratico corrispondente. Studia la lezione <strong>prima</strong> di eseguire il task tecnico — la teoria dà contesto al codice.</div>
+  <div class="corso-note">🔗 anthropic.skilljar.com/claude-with-the-anthropic-api &nbsp;·&nbsp; Gratuito · Iscrizione richiesta</div>
 </div>
 
 <!-- MILESTONES -->
@@ -192,59 +181,11 @@ html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'
   <div id="gantt"></div>
 </div>
 
-<!-- TIMER -->
-<div class="timer-card">
-  <div class="timer-sec-lbl">SESSIONE DI LAVORO — TIMER</div>
-  <div class="sess-grid">
-    <div class="sess on" id="s-morning" onclick="selSess('morning')">
-      <div class="sess-name">Mattina</div>
-      <div class="sess-info">06:00 → 06:45 · 45 min</div>
-      <div class="sess-pc" style="color:var(--teal)">PC personale · codice</div>
-    </div>
-    <div class="sess" id="s-lunch" onclick="selSess('lunch')">
-      <div class="sess-name">Pranzo</div>
-      <div class="sess-info">20 min · teoria</div>
-      <div class="sess-pc" style="color:var(--blue)">PC lavoro · corso API</div>
-    </div>
-  </div>
-  <div class="tdisp">
-    <div class="tclock idle" id="tclock">45:00</div>
-    <div class="tlbl" id="tlbl">Scegli sessione e premi Avvia</div>
-  </div>
-  <div class="tbtns">
-    <button class="tbtn pri" id="btn-start" onclick="startT()">▶ Avvia</button>
-    <button class="tbtn" id="btn-pause" onclick="pauseT()" style="display:none">⏸ Pausa</button>
-    <button class="tbtn" onclick="resetT()">↺ Reset</button>
-  </div>
-</div>
-
-<!-- NOTIFICHE -->
-<div class="notif-card">
-  <div class="timer-sec-lbl">PROMEMORIA — NOTIFICHE BROWSER</div>
-  <div class="nrow">
-    <div class="nicon">🌅</div>
-    <div class="ntxt">Sessione mattina<small>Ogni giorno alle 06:00 — PC personale</small></div>
-    <input type="checkbox" class="ntog" id="n-morning" onchange="setNotif('morning',this.checked)">
-  </div>
-  <div class="nrow">
-    <div class="nicon">☕</div>
-    <div class="ntxt">Pausa pranzo<small>Ogni giorno alle 13:00 — PC lavoro</small></div>
-    <input type="checkbox" class="ntog" id="n-lunch" onchange="setNotif('lunch',this.checked)">
-  </div>
-  <div class="nrow" id="n-status" style="display:none;border-color:rgba(0,201,167,.2)">
-    <div class="nicon">ℹ</div>
-    <div class="ntxt" id="n-status-txt" style="font-size:12px;color:var(--text2)"></div>
-  </div>
-  <div style="margin-top:.85rem;padding:.75rem;background:var(--bg2);border-radius:var(--r-md);font-size:11px;color:var(--text3);line-height:1.6;font-family:'JetBrains Mono',monospace">
-    TIP: per notifiche garantite sul telefono, imposta anche un<br>allarme ricorrente chiamato "WeldAI 06:00" nell'app Orologio.
-  </div>
-</div>
-
 <!-- FOOTER -->
 <div class="footer-note">
   <strong>Come installare sul telefono:</strong><br>
-  <strong>iPhone/Safari:</strong> premi il tasto Condividi (quadrato con freccia) → "Aggiungi a schermata Home"<br>
-  <strong>Android/Chrome:</strong> premi i tre puntini → "Aggiungi a schermata Home" oppure aspetta il banner qui sopra<br><br>
+  <strong>iPhone/Safari:</strong> premi il tasto Condividi → "Aggiungi a schermata Home"<br>
+  <strong>Android/Chrome:</strong> premi i tre puntini → "Aggiungi a schermata Home"<br><br>
   I tuoi progressi vengono salvati automaticamente nel browser. Riaprendo l'app ritrovi tutto dove l'hai lasciato.
 </div>
 
@@ -254,90 +195,125 @@ html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'
 
 <script>
 const DATA=[
-  {id:'m1',title:'Setup & prima chiamata API',badge:'b-now',bl:'INIZIA ORA',weeks:'Sett. 1–2',col:'#00c9a7',gs:0,gl:2,
+  // ── MODULO 1 — Setup & prima chiamata API ──────────────────────────────
+  {id:'m1',title:'Setup & prima chiamata API',badge:'b-now',bl:'✅ COMPLETATO',weeks:'Sett. 1–2',col:'#007a65',gs:0,gl:2,
    sprints:[
-    {n:'Sprint A — ambiente',dot:'#00c9a7',d:'~1 sett.',tasks:[
-      {id:'a1',t:'Installare Python 3.11+ sul PC personale',n:'python.org → Download',pc:'home'},
-      {id:'a2',t:'Installare VS Code + estensione Python',n:'code.visualstudio.com',pc:'home'},
-      {id:'a3',t:'Creare account Anthropic Console',n:'console.anthropic.com — gratuito',pc:'both'},
-      {id:'a4',t:'Generare API Key e salvarla in file .env',n:'Mai nel codice sorgente',pc:'home'},
-      {id:'a5',t:'Leggere overview corso "Build with Claude API"',n:'docs.claude.ai — sezione Build',pc:'work'},
+    {n:'Sprint A — ambiente + credenziali',dot:'#007a65',d:'✅ fatto',tasks:[
+      {id:'a1',t:'Installare Python 3.11+ e VS Code sul PC',n:'python.org + code.visualstudio.com',pc:'home'},
+      {id:'a2',t:'Creare account Anthropic Console',n:'console.anthropic.com — gratuito',pc:'both'},
+      {id:'a3',t:'Generare API Key e salvarla in file .env',n:'Mai scrivere la key nel codice sorgente',pc:'home'},
+      {id:'a4',t:'Acquistare crediti Anthropic ($5 min)',n:'Console → Billing → Add credits',pc:'both'},
+      {id:'a5',t:'pip install anthropic python-dotenv',n:'Prima libreria del progetto',pc:'home'},
     ]},
-    {n:'Sprint B — prima risposta Claude',dot:'#00c9a7',d:'~1 sett.',tasks:[
-      {id:'b1',t:'pip install anthropic nel terminale VS Code',n:'Prima libreria del progetto',pc:'home'},
-      {id:'b2',t:'Script hello world — Claude risponde nel terminale',n:'15 righe commentate riga per riga',pc:'home'},
-      {id:'b3',t:'MILESTONE: prima risposta API ricevuta',n:'Momento storico!',pc:'ms'},
-      {id:'b4',t:'Corso: Making a request + Multi-Turn conversations',n:'skilljar.com — Sezione: Accessing Claude with the API',pc:'work'},
-      {id:'b5',t:'Corso: System prompts + System prompts exercise',n:'skilljar.com — Sezione: Accessing Claude with the API',pc:'work'},
-      {id:'b6',t:'Corso: Temperature + Response streaming + Structured data',n:'skilljar.com — Quiz finale sezione API',pc:'work'},
-      {id:'b7',t:'Esercizio: 3 domande diverse a Claude via codice',n:'Cambia temperature e osserva come cambia la risposta',pc:'home'},
+    {n:'Sprint B — prima risposta + system prompt',dot:'#007a65',d:'✅ fatto',tasks:[
+      {id:'b1',t:'Script test_api.py — Claude risponde nel terminale',n:'Prima chiamata API funzionante ✅',pc:'home'},
+      {id:'b2',t:'MILESTONE: prima risposta API ricevuta',n:'Completato il 2026-04-19 🎉',pc:'ms'},
+      {id:'b3',t:'Aggiungere system prompt "esperto welding"',n:'Ruolo + correzioni dominio validate da IWE',pc:'home'},
+      {id:'b4',t:'Creare file correzioni_dominio.txt',n:'Log errori AI validati da esperto — vantaggio competitivo',pc:'home'},
+      // CORSO
+      {id:'b_c1',t:'📚 CORSO: Welcome to the course',n:'Introduzione — panoramica struttura corso',pc:'work',corso:true},
+      {id:'b_c2',t:'📚 CORSO: Anthropic overview + Overview of Claude models',n:'Capire i modelli disponibili e quando usarli',pc:'work',corso:true},
+      {id:'b_c3',t:'📚 CORSO: Accessing the API + Getting an API key',n:'Già fatto in pratica — la teoria consolida',pc:'work',corso:true},
+      {id:'b_c4',t:'📚 CORSO: Making a request + System prompts',n:'Spiega cosa hai appena costruito in test_api.py',pc:'work',corso:true},
+      {id:'b_c5',t:'📚 CORSO: System prompts exercise',n:'Esercizio pratico sui system prompt',pc:'work',corso:true},
     ]},
    ]},
-  {id:'m2',title:'RAG — Claude legge i PDF normativi',badge:'b-next',bl:'PROSSIMO',weeks:'Sett. 3–6',col:'#4d9fff',gs:2,gl:4,
+
+  // ── MODULO 2 — RAG: Claude legge i PDF normativi ──────────────────────
+  {id:'m2',title:'RAG — Claude legge i PDF normativi',badge:'b-next',bl:'PROSSIMO',weeks:'Sett. 3–6',col:'#1a6db5',gs:2,gl:4,
    sprints:[
-    {n:'Sprint C — lettura PDF',dot:'#4d9fff',d:'~1.5 sett.',tasks:[
+    {n:'Sprint C — lettura PDF',dot:'#1a6db5',d:'~1.5 sett.',tasks:[
       {id:'c1',t:'pip install pymupdf — libreria lettura PDF',n:'Gratuita, gira in locale',pc:'home'},
-      {id:'c2',t:'Script che estrae testo dal QT.6495.022',n:'Test: stampa prime 500 parole',pc:'home'},
-      {id:'c3',t:'Inviare testo a Claude e fare una domanda',n:'Es: "cosa richiede CL1?"',pc:'home'},
-      {id:'c4',t:'Corso: Prompt engineering + Being clear + XML tags + Providing examples',n:'skilljar.com — Sezione: Prompt engineering techniques',pc:'work'},
+      {id:'c2',t:'Script che estrae testo dal QT.6495.022',n:'Test: stampa prime 500 parole nel terminale',pc:'home'},
+      {id:'c3',t:'Inviare testo estratto a Claude con una domanda',n:'Es: "cosa richiede CL1 per i mock-up?"',pc:'home'},
+      // CORSO
+      {id:'c_c1',t:'📚 CORSO: Multi-Turn conversations + Chat exercise',n:'Conversazioni a più turni — base per agente interattivo',pc:'work',corso:true},
+      {id:'c_c2',t:'📚 CORSO: Temperature + Structured data',n:'Controllo output — fondamentale per report automatici',pc:'work',corso:true},
+      {id:'c_c3',t:'📚 CORSO: Structured data exercise',n:'Esercizio pratico — output JSON strutturato',pc:'work',corso:true},
     ]},
-    {n:'Sprint D — database vettoriale RAG',dot:'#4d9fff',d:'~2.5 sett.',tasks:[
+    {n:'Sprint D — database vettoriale RAG',dot:'#1a6db5',d:'~2.5 sett.',tasks:[
       {id:'d1',t:'pip install chromadb — DB vettoriale locale gratuito',n:'Zero costi, gira sul tuo PC',pc:'home'},
       {id:'d2',t:'Dividere i 3 PDF in chunk da 400 parole',n:'Funzione commentata riga per riga',pc:'home'},
       {id:'d3',t:'Salvare chunk nel database vettoriale',n:'I documenti diventano interrogabili',pc:'home'},
       {id:'d4',t:'Query: trova chunk rilevanti per una domanda',n:'Es: "requisiti mock-up" → paragrafo esatto',pc:'home'},
-      {id:'d5',t:'MILESTONE: Claude risponde citando paragrafo sorgente',n:'Cuore del prodotto',pc:'ms'},
-      {id:'d6',t:'Corso: Introducing RAG + Text chunking + Text embeddings + Full RAG flow',n:'skilljar.com — Sezione: RAG and Agentic Search',pc:'work'},
+      {id:'d5',t:'MILESTONE: Claude risponde citando paragrafo sorgente',n:'Cuore del prodotto — RAG funzionante',pc:'ms'},
+      // CORSO
+      {id:'d_c1',t:'📚 CORSO: Introducing Retrieval Augmented Generation',n:'La teoria dietro quello che stai costruendo',pc:'work',corso:true},
+      {id:'d_c2',t:'📚 CORSO: Text chunking strategies',n:'Come dividere i PDF — spiega il perché dei chunk',pc:'work',corso:true},
+      {id:'d_c3',t:'📚 CORSO: Text embeddings + The full RAG flow',n:'Come funziona la ricerca semantica',pc:'work',corso:true},
+      {id:'d_c4',t:'📚 CORSO: Implementing the RAG flow',n:'Implementazione pratica — segui il codice',pc:'work',corso:true},
+      {id:'d_c5',t:'📚 CORSO: Prompt engineering — Being clear and direct',n:'Migliora i prompt degli agenti specializzati',pc:'work',corso:true},
+      {id:'d_c6',t:'📚 CORSO: Structure with XML tags + Providing examples',n:'Tecnica avanzata per output strutturati',pc:'work',corso:true},
     ]},
    ]},
-  {id:'m3',title:'5 agenti specializzati Welding Book',badge:'b-next',bl:'FASE 3',weeks:'Sett. 7–10',col:'#9b78ff',gs:6,gl:4,
+
+  // ── MODULO 3 — 5 agenti specializzati Welding Book ────────────────────
+  {id:'m3',title:'5 agenti specializzati Welding Book',badge:'b-next',bl:'FASE 3',weeks:'Sett. 7–10',col:'#6040b5',gs:6,gl:4,
    sprints:[
-    {n:'Fondamenta — architettura multi-agente',dot:'#9b78ff',d:'studio',tasks:[
-      {id:'e0',t:'Corso: Introducing tool use + Tool functions + Tool schemas',n:'skilljar.com — Sezione: Tool use with Claude',pc:'work'},
-      {id:'e0b',t:'Corso: Agents and workflows + Parallelization + Chaining + Routing',n:'skilljar.com — Sezione: Agents and workflows',pc:'work'},
+    {n:'Fondamenta — architettura multi-agente',dot:'#6040b5',d:'studio',tasks:[
+      // CORSO
+      {id:'e_c1',t:'📚 CORSO: Introducing tool use + Tool functions',n:'Base tecnica per agenti specializzati',pc:'work',corso:true},
+      {id:'e_c2',t:'📚 CORSO: Tool schemas + Handling message blocks',n:'Come strutturare input/output degli agenti',pc:'work',corso:true},
+      {id:'e_c3',t:'📚 CORSO: Using multiple tools + Multi-turn conversations with tools',n:'Agenti che collaborano — architettura WeldAIM',pc:'work',corso:true},
+      {id:'e_c4',t:'📚 CORSO: Agents and workflows + Parallelization workflows',n:'Pattern agenti paralleli — es. 5 agenti in contemporanea',pc:'work',corso:true},
+      {id:'e_c5',t:'📚 CORSO: Chaining workflows + Routing workflows',n:'Agente supervisore che smista ai 5 specializzati',pc:'work',corso:true},
     ]},
-    {n:'Agente 1 — WPS + WPQR (cartelle 01–02)',dot:'#9b78ff',d:'~1 sett.',tasks:[
-      {id:'e1',t:'Verifica corrispondenza 1:1 WPS/WPQR',n:'ISO 15609-1 + QT.6495.024 §1–2',pc:'home'},
+    {n:'Agente 1 — WPS + WPQR (cartelle 01–02)',dot:'#6040b5',d:'~1 sett.',tasks:[
+      {id:'e1',t:'Verifica corrispondenza 1:1 WPS/WPQR',n:'ISO 15609 + ISO 15614 + QT.6495.024 §1–2',pc:'home'},
       {id:'e2',t:'Controllo firma/data CS su ogni documento',n:'NC se manca approvazione CS',pc:'home'},
+      {id:'e3',t:'Date WPS ≥ data WPQR collegata',n:'Regola cronologica obbligatoria',pc:'home'},
     ]},
-    {n:'Agente 2 — Qualifiche saldatori (cartella 03)',dot:'#9b78ff',d:'~1 sett.',tasks:[
-      {id:'e3',t:'Estrae date scadenza da ogni qualifica',n:'ISO 9606-1/2 + ISO 14732',pc:'home'},
-      {id:'e4',t:'Flag qualifiche scadute o in scadenza 30gg',n:'Confronto automatico con data oggi',pc:'home'},
-      {id:'e5',t:'Verifica copertura qualifiche vs giunti su disegno',n:'WQ connesse al manufatto specifico',pc:'home'},
+    {n:'Agente 2 — Qualifiche saldatori (cartella 03)',dot:'#6040b5',d:'~1 sett.',tasks:[
+      {id:'e4',t:'Estrae date scadenza da ogni qualifica',n:'ISO 9606 + ISO 14732',pc:'home'},
+      {id:'e5',t:'Flag qualifiche scadute o in scadenza 30gg',n:'Confronto automatico con data oggi',pc:'home'},
+      {id:'e6',t:'Verifica copertura qualifiche vs giunti su disegno',n:'WQ connesse al manufatto specifico',pc:'home'},
     ]},
-    {n:'Agente 3 — Mock-up + Visual test (07–09)',dot:'#9b78ff',d:'~1 sett.',tasks:[
-      {id:'e6',t:'N mock-up = N saldatori (regola QT.6495.022)',n:'Errore più frequente in audit',pc:'home'},
-      {id:'e7',t:'Report mock-up: 2 foto macro, ingrand. 2.5x–10x',n:'QT.6495.023 §1.4',pc:'home'},
-      {id:'e8',t:'Visual test: cert. ISO 17637 + firma CS',n:'QT.6495.024 §9',pc:'home'},
+    {n:'Agente 3 — Mock-up + Visual test (07–09)',dot:'#6040b5',d:'~1 sett.',tasks:[
+      {id:'e7',t:'Almeno 2 mock-up per azienda — saldatori giunti soggetti',n:'Non tutti i saldatori — solo chi esegue giunti mock-up',pc:'home'},
+      {id:'e8',t:'Report mock-up: 2 foto macro, ingrand. 2.5x–10x',n:'QT.6495.023',pc:'home'},
+      {id:'e9',t:'Visual test: cert. ISO 17637 + firma CS + data post-produzione',n:'Data VT successiva a produzione nel PFC',pc:'home'},
+      {id:'e10',t:'VT: riferimento disegno + Serial Number (SN) manufatto',n:'Tracciabilità obbligatoria',pc:'home'},
     ]},
-    {n:'Agente 4 — Materiali + Certificati (06–08)',dot:'#9b78ff',d:'~0.5 sett.',tasks:[
-      {id:'e9',t:'Cert. 3.1 EN 10204 — tipo esatto, no modifiche',n:'Lamiere: +DOP / Tubolari: +DOP+CPR',pc:'home'},
-      {id:'e10',t:'Materiale apporto conforme a disegno e omologato DB',n:'QT.6495.022 §4.4',pc:'home'},
+    {n:'Agente 4 — Materiali + Certificati (06–08)',dot:'#6040b5',d:'~0.5 sett.',tasks:[
+      {id:'e11',t:'Materiale base: cert. 3.1 EN 10204 + DOP',n:'Tubolari: + CPR aggiuntivo',pc:'home'},
+      {id:'e12',t:'Materiale apporto: cert. 3.1 + 2.2 produttore',n:'Presente su joincert.eu con posizioni valide',pc:'home'},
+      {id:'e13',t:'Apporto scaduto: verifica data acquisto ante scadenza',n:'Accettabile se acquisto ante scadenza — richiede prova',pc:'home'},
     ]},
-    {n:'Agente 5 — PFC + EN15085 + Saldatrici (11–13)',dot:'#9b78ff',d:'~0.5 sett.',tasks:[
-      {id:'e11',t:'PFC: tutti i campi obbligatori presenti',n:'EN 15085-5 + QT.6495.024 §11',pc:'home'},
-      {id:'e12',t:'Cert. EN 15085 valido su joincert.eu',n:'Controllo data validità + processi coperti',pc:'home'},
-      {id:'e13',t:'Saldatrici calibrate IEC 60974-14 — scadenze ok',n:'QT.6495.024 §13',pc:'home'},
+    {n:'Agente 5 — PFC + EN15085 + Saldatrici (11–13)',dot:'#6040b5',d:'~0.5 sett.',tasks:[
+      {id:'e14',t:'PFC: tutti i campi obbligatori presenti',n:'EN 15085-5 + QT.6495.024 §11',pc:'home'},
+      {id:'e15',t:'Data PFC ≥ data WPS, Mock-up, WQ, Materiali',n:'Regola cronologica obbligatoria',pc:'home'},
+      {id:'e16',t:'Cert. EN 15085-2 valido su joincert.eu',n:'Processi coperti = WPQR presentate',pc:'home'},
+      {id:'e17',t:'Saldatrici calibrate IEC 60974-14 — scadenze ok',n:'QT.6495.024 §13',pc:'home'},
     ]},
-    {n:'Agente supervisore — output finale',dot:'#9b78ff',d:'~1 sett.',tasks:[
-      {id:'e14',t:'Supervisore aggrega NC dai 5 agenti specializzati',n:'Un unico report strutturato per CL',pc:'home'},
-      {id:'e15',t:'Semaforo GO / ATTENZIONE / STOP produzione',n:'Azioni correttive ITA+ENG già scritte',pc:'home'},
-      {id:'e16',t:'MILESTONE: primo welding book reale analizzato',n:'Test con documento di fornitore reale',pc:'ms'},
+    {n:'Agente supervisore — output finale',dot:'#6040b5',d:'~1 sett.',tasks:[
+      {id:'e18',t:'Supervisore aggrega NC dai 5 agenti specializzati',n:'Un unico report strutturato per CL',pc:'home'},
+      {id:'e19',t:'Semaforo GO / ATTENZIONE / STOP produzione',n:'Azioni correttive ITA+ENG già scritte',pc:'home'},
+      {id:'e20',t:'MILESTONE: primo welding book reale analizzato',n:'Test con documento di fornitore reale',pc:'ms'},
+      // CORSO
+      {id:'e_c6',t:'📚 CORSO: PDF support + Citations',n:'Claude legge PDF nativamente — feature avanzata',pc:'work',corso:true},
+      {id:'e_c7',t:'📚 CORSO: Prompt caching in action',n:'Riduce costi su normative richiamate spesso',pc:'work',corso:true},
     ]},
    ]},
-  {id:'m4',title:'Web app Streamlit + export PDF',badge:'b-fut',bl:'FASE 4',weeks:'Sett. 10–12',col:'#f0a030',gs:9,gl:3,
+
+  // ── MODULO 4 — Web app Streamlit + export PDF ────────────────────────
+  {id:'m4',title:'Web app Streamlit + export PDF',badge:'b-fut',bl:'FASE 4',weeks:'Sett. 10–12',col:'#b56e00',gs:9,gl:3,
    sprints:[
-    {n:'Sprint web app',dot:'#f0a030',d:'~3 sett.',tasks:[
-      {id:'f1',t:'pip install streamlit — web app senza HTML',n:'Framework Python più semplice',pc:'home'},
-      {id:'f2',t:'Upload PDF welding book + selezione CL1/2/3',n:'Form drag & drop',pc:'home'},
+    {n:'Sprint web app',dot:'#b56e00',d:'~3 sett.',tasks:[
+      {id:'f1',t:'pip install streamlit — web app senza HTML/CSS',n:'Framework Python più semplice — zero design',pc:'home'},
+      {id:'f2',t:'Upload PDF welding book + selezione CL1/CL2/CL3',n:'Form drag & drop',pc:'home'},
       {id:'f3',t:'Tabella NC con semaforo per cartella',n:'Prima UI professionale',pc:'home'},
       {id:'f4',t:'Export report PDF doppia lingua ITA/ENG',n:'pip install reportlab',pc:'home'},
       {id:'f5',t:'MILESTONE: demo con primo cliente reale',n:'Raccogliere feedback e iterare',pc:'ms'},
+      // CORSO
+      {id:'f_c1',t:'📚 CORSO: Response streaming',n:'Risposte in tempo reale nella UI — effetto professionale',pc:'work',corso:true},
+      {id:'f_c2',t:'📚 CORSO: Code execution and the Files API',n:'Gestione upload file — rilevante per upload PDF',pc:'work',corso:true},
     ]},
    ]},
-  {id:'m5',title:'Sito weldaim.ai — vetrina e lead capture',badge:'b-site',bl:'IN PARALLELO',weeks:'Sett. 6–8',col:'#e0608a',gs:5,gl:3,
+
+  // ── MODULO 5 — Sito weldaim.ai ────────────────────────────────────────
+  {id:'m5',title:'Sito weldaim.ai — vetrina e lead capture',badge:'b-site',bl:'IN PARALLELO',weeks:'Sett. 6–8',col:'#b5305a',gs:5,gl:3,
    sprints:[
-    {n:'Sito web — Framer o Webflow (zero codice)',dot:'#e0608a',d:'~2 sett.',tasks:[
+    {n:'Sito web — Framer o Webflow (zero codice)',dot:'#b5305a',d:'~2 sett.',tasks:[
       {id:'g1',t:'Scegliere piattaforma: Framer (consigliato) o Webflow',n:'Entrambi drag-and-drop, piano free',pc:'both'},
       {id:'g2',t:'Homepage: problema + soluzione + form contatti',n:'Niente prezzi ancora — solo lead capture',pc:'both'},
       {id:'g3',t:'Collegare dominio weldaim.ai al sito',n:'DNS redirect — 15 minuti su Framer',pc:'both'},
@@ -350,7 +326,7 @@ const DATA=[
 const TOTAL_WEEKS=14;
 
 function init(){
-  const d=new Date();
+  const d=new Date(2026,3,19); // data di inizio progetto: 19 aprile 2026
   document.getElementById('start-date').textContent=d.toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'});
   const demo=new Date(d.getTime()+98*24*60*60*1000);
   document.getElementById('demo-v').textContent=demo.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
@@ -383,7 +359,7 @@ function buildMS(){
       sb.appendChild(sh);
       s.tasks.forEach(t=>{
         const label=document.createElement('label');
-        label.className='task'; label.id='tl-'+t.id;
+        label.className='task'+(t.corso?' corso-task':''); label.id='tl-'+t.id;
         const cb=document.createElement('input');
         cb.type='checkbox'; cb.id='cb-'+t.id;
         cb.addEventListener('change',()=>onCheck(t.id,m.id,cb.checked));
@@ -392,8 +368,8 @@ function buildMS(){
         const tx=document.createElement('span'); tx.className='task-text'; tx.textContent=t.t;
         const tg=document.createElement('span');
         const pc=t.pc;
-        tg.className='tag '+(pc==='home'?'t-home':pc==='work'?'t-work':pc==='both'?'t-both':'t-ms');
-        tg.textContent=pc==='home'?'casa':pc==='work'?'lavoro':pc==='both'?'entrambi':'milestone';
+        tg.className='tag '+(t.corso?'t-corso':pc==='home'?'t-home':pc==='work'?'t-work':pc==='both'?'t-both':'t-ms');
+        tg.textContent=t.corso?'corso':pc==='home'?'casa':pc==='work'?'lavoro':pc==='both'?'entrambi':'milestone';
         tl.appendChild(tx); tl.appendChild(tg);
         const tn=document.createElement('div'); tn.className='task-note'; tn.textContent=t.n;
         bd.appendChild(tl); bd.appendChild(tn);
@@ -418,12 +394,14 @@ function buildGantt(){
   }
   g.appendChild(hw);
   const bars=[
-    {l:'Setup & API',s:0,len:2,c:'#00c9a7'},
-    {l:'RAG engine',s:2,len:4,c:'#4d9fff'},
-    {l:'5 agenti WB',s:6,len:4,c:'#9b78ff'},
-    {l:'sito weldaim.ai',s:5,len:3,c:'#e0608a'},
-    {l:'Web app',s:9,len:3,c:'#f0a030'},
-    {l:'deploy+demo',s:11,len:3,c:'#00c9a7'},
+    {l:'Setup & API',s:0,len:2,c:'#007a65'},
+    {l:'Corso — base',s:0,len:2,c:'#7b3fa0'},
+    {l:'RAG engine',s:2,len:4,c:'#1a6db5'},
+    {l:'Corso — RAG',s:2,len:4,c:'#7b3fa0'},
+    {l:'5 agenti WB',s:6,len:4,c:'#6040b5'},
+    {l:'sito weldaim',s:5,len:3,c:'#b5305a'},
+    {l:'Web app',s:9,len:3,c:'#b56e00'},
+    {l:'deploy+demo',s:11,len:3,c:'#007a65'},
   ];
   bars.forEach(b=>{
     const r=document.createElement('div'); r.className='grow';
@@ -441,12 +419,11 @@ function buildGantt(){
 }
 
 function loadState(){
-  // Task completati confermati — Sprint A completato al 100%
-  const COMPLETED=['a1','a2','a3','a4','a5'];
-  const sv=JSON.parse(localStorage.getItem('weldai_v3')||'{}');
-  // Pre-spunta i task completati se non già salvati
+  // Sprint A + B completati al 2026-04-19
+  const COMPLETED=['a1','a2','a3','a4','a5','b1','b2','b3','b4'];
+  const sv=JSON.parse(localStorage.getItem('weldai_v4')||'{}');
   COMPLETED.forEach(id=>{ if(!(id in sv)) sv[id]=true; });
-  localStorage.setItem('weldai_v3',JSON.stringify(sv));
+  localStorage.setItem('weldai_v4',JSON.stringify(sv));
   DATA.forEach(m=>m.sprints.forEach(s=>s.tasks.forEach(t=>{
     if(sv[t.id]){
       const cb=document.getElementById('cb-'+t.id);
@@ -461,9 +438,9 @@ function loadState(){
 function onCheck(id,mid,checked){
   const tl=document.getElementById('tl-'+id);
   if(tl)checked?tl.classList.add('done'):tl.classList.remove('done');
-  const sv=JSON.parse(localStorage.getItem('weldai_v3')||'{}');
+  const sv=JSON.parse(localStorage.getItem('weldai_v4')||'{}');
   sv[id]=checked;
-  localStorage.setItem('weldai_v3',JSON.stringify(sv));
+  localStorage.setItem('weldai_v4',JSON.stringify(sv));
   updateProg();
 }
 
@@ -485,99 +462,10 @@ function updateProg(){
 
 function resetAll(){
   if(!confirm('Azzerare tutti i progressi?'))return;
-  localStorage.removeItem('weldai_v3');
+  localStorage.removeItem('weldai_v4');
   document.querySelectorAll('.task').forEach(t=>t.classList.remove('done'));
   document.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);
   updateProg();
-}
-
-// TIMER
-let tInt=null,tSecs=45*60,tRun=false,curSess='morning';
-const sessData={morning:{s:45*60,l:'Sessione mattina · 45 min'},lunch:{s:20*60,l:'Pausa pranzo · 20 min'}};
-
-function selSess(s){
-  curSess=s;
-  document.getElementById('s-morning').classList.toggle('on',s==='morning');
-  document.getElementById('s-lunch').classList.toggle('on',s==='lunch');
-  if(!tRun)resetT();
-}
-
-function fmt(s){const m=Math.floor(s/60),ss=s%60;return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
-
-function startT(){
-  if(tRun)return;
-  tRun=true;
-  document.getElementById('btn-start').style.display='none';
-  document.getElementById('btn-pause').style.display='';
-  document.getElementById('tclock').className='tclock run';
-  document.getElementById('tlbl').textContent=sessData[curSess].l+' — in corso';
-  tInt=setInterval(()=>{
-    tSecs--;
-    document.getElementById('tclock').textContent=fmt(tSecs);
-    if(tSecs<=0){
-      clearInterval(tInt); tRun=false;
-      document.getElementById('tclock').className='tclock fin';
-      document.getElementById('tclock').textContent='00:00';
-      document.getElementById('tlbl').textContent='Sessione completata! Ottimo lavoro.';
-      document.getElementById('btn-pause').style.display='none';
-      document.getElementById('btn-start').style.display='';
-      if(Notification.permission==='granted')new Notification('WeldAI',{body:'Sessione '+sessData[curSess].l+' completata!'});
-    }
-  },1000);
-}
-
-function pauseT(){
-  if(!tRun)return;
-  clearInterval(tInt); tRun=false;
-  document.getElementById('btn-start').style.display='';
-  document.getElementById('btn-start').textContent='▶ Riprendi';
-  document.getElementById('btn-pause').style.display='none';
-  document.getElementById('tclock').className='tclock idle';
-}
-
-function resetT(){
-  clearInterval(tInt); tRun=false;
-  tSecs=sessData[curSess].s;
-  document.getElementById('tclock').textContent=fmt(tSecs);
-  document.getElementById('tclock').className='tclock idle';
-  document.getElementById('tlbl').textContent=sessData[curSess].l+' — premi Avvia';
-  document.getElementById('btn-start').textContent='▶ Avvia';
-  document.getElementById('btn-start').style.display='';
-  document.getElementById('btn-pause').style.display='none';
-}
-
-// NOTIFICHE
-function setNotif(type,on){
-  const st=document.getElementById('n-status');
-  const stxt=document.getElementById('n-status-txt');
-  if(!on){st.style.display='none';return;}
-  if(!('Notification' in window)){
-    stxt.textContent='Browser non supporta notifiche.';
-    st.style.display='flex';
-    document.getElementById('n-'+type).checked=false;
-    return;
-  }
-  Notification.requestPermission().then(p=>{
-    st.style.display='flex';
-    if(p==='granted'){
-      stxt.textContent='Notifiche attivate per '+(type==='morning'?'le 06:00':'le 13:00')+'.';
-      schedNotif(type);
-    } else {
-      stxt.textContent='Permesso negato. Abilita nelle impostazioni del browser.';
-      document.getElementById('n-'+type).checked=false;
-    }
-  });
-}
-
-function schedNotif(type){
-  const now=new Date(),t=new Date();
-  type==='morning'?t.setHours(6,0,0,0):t.setHours(13,0,0,0);
-  if(t<=now)t.setDate(t.getDate()+1);
-  setTimeout(()=>{
-    if(Notification.permission==='granted'){
-      new Notification('WeldAI',{body:type==='morning'?'Sessione mattina — 45 min di codice!':'Pausa pranzo — 20 min di teoria API!'});
-    }
-  },t-now);
 }
 
 // PWA
