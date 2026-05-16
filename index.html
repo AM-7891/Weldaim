@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeldAIM — Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg0: #1c2333;
+  --bg1: #242f45;
+  --bg2: #2d3a52;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --text: #dde3f0;
+  --text2: #7b8ea8;
+  --text3: #3d4f66;
+  --teal: #00c9a7;
+  --teal-glow: rgba(0,201,167,0.10);
+  --blue: #4d9fff;
+  --blue-glow: rgba(77,159,255,0.10);
+  --amber: #f0a030;
+  --amber-glow: rgba(240,160,48,0.10);
+  --purple: #a371f7;
+  --purple-glow: rgba(163,113,247,0.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg0);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .15em;
+  color: var(--teal);
+  background: var(--teal-glow);
+  border: .5px solid rgba(0,201,167,.25);
+  padding: 3px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+
+.logo {
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: .5rem;
+}
+
+.logo span { color: var(--teal); }
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text2);
+  font-weight: 300;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: .04em;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 720px;
+}
+
+/* CARD */
+.card {
+  background: var(--bg1);
+  border: .5px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  border-radius: 16px 16px 0 0;
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border2);
+  background: var(--bg2);
+}
+
+.card:hover::before { opacity: 1; }
+
+/* colori accent per card */
+.card-gantt::before { background: var(--teal); }
+.card-gantt:hover { border-color: rgba(0,201,167,.3); }
+
+.card-spese::before { background: var(--amber); }
+.card-spese:hover { border-color: rgba(240,160,48,.3); }
+
+.card-note::before { background: var(--purple); }
+.card-note:hover { border-color: rgba(163,113,247,.3); }
+
+.card-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.card-body {}
+
+.card-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.card-gantt .card-label { color: var(--teal); }
+.card-spese .card-label { color: var(--amber); }
+.card-note .card-label { color: var(--purple); }
+
+.card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+.card-arrow {
+  margin-top: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  transition: color .18s ease;
+}
+
+.card:hover .card-arrow { color: var(--text2); }
+
+/* FOOTER */
+.footer {
+  margin-top: 3rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: .06em;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">Modulo 1 — Welding Book Agent</div>
+  <div class="logo">Weld<span>AIM</span></div>
+  <div class="subtitle">Piano Operativo · Dashboard</div>
+</div>
+
+<div class="grid">
+
+  <a class="card card-gantt" href="gantt_weldaim_v2.html">
+    <div class="card-icon">📋</div>
+    <div class="card-body">
+      <div class="card-label">Pianificazione</div>
+      <div class="card-title">Gantt & Task</div>
+      <div class="card-desc">Piano operativo, sprint settimanali e tracciamento progressi.</div>
+    </div>
+    <div class="card-arrow">Apri →</div>
+  </a>
+
+  <a class="card card-spese" href="weldaim_spese_v2.html">
+    <div class="card-icon">💶</div>
+    <div class="card-body">
+      <div class="card-label">Budget</div>
+      <div class="card-title">Registro Spese</div>
+      <div class="card-desc">Investimenti, abbonamenti e crediti API del progetto.</div>
+    </div>
+    <div class="card-arrow">Apri →</div>
+  </a>
+
+  <a class="card card-note" href="weldaim_note.html">
+    <div class="card-icon">📝</div>
+    <div class="card-body">
+      <div class="card-label">Idee & Note</div>
+      <div class="card-title">Note di Progetto</div>
+      <div class="card-desc">Feature, architettura, idee commerciali e appunti rapidi.</div>
+    </div>
+    <div class="card-arrow">Apri →</div>
+  </a>
+
+</div>
+
+<div class="footer">weldaim.ai &nbsp;·&nbsp; WeldAIM © 2026</div>
+
+</body>
+</html>
