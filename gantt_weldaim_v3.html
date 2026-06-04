@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="WeldAIM">
+<meta name="theme-color" content="#1e2535">
+<title>WeldAIM — Piano Operativo Modulo 1</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root {
+  --bg0:#1e2535; --bg1:#28354d; --bg2:#32405a; --bg3:#3d4d6a;
+  --border:rgba(255,255,255,0.13); --border2:rgba(255,255,255,0.24);
+  --text:#eaf0fa; --text2:#b8cce4; --text3:#7a96c0;
+  --teal:#00c4a0; --teal-glow:rgba(0,196,160,0.11);
+  --blue:#4a9de0; --blue-glow:rgba(74,157,224,0.11);
+  --amber:#e09430; --amber-glow:rgba(224,148,48,0.11);
+  --pink:#e04878; --pink-glow:rgba(224,72,120,0.11);
+  --green:#2ab868;
+  --api:#9060c8; --api-glow:rgba(144,96,200,0.13);
+  --cc:#e08030; --cc-glow:rgba(224,128,48,0.13);
+  --cloud:#3a90d8; --cloud-glow:rgba(58,144,216,0.11);
+  --r-md:12px; --r-lg:16px;
+  --shadow:0 2px 8px rgba(0,0,0,0.22), 0 0 0 0.5px rgba(0,0,0,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:15px;line-height:1.6}
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg0)} ::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
+.app{max-width:780px;margin:0 auto;padding:1.5rem 1rem 5rem}
+.header{margin-bottom:1.75rem}
+.brand-row{display:flex;align-items:center;gap:10px;margin-bottom:.6rem}
+.brand-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.12em;color:var(--teal);background:var(--teal-glow);border:.5px solid rgba(0,196,160,.28);padding:3px 10px;border-radius:20px}
+.header h1{font-size:24px;font-weight:600;letter-spacing:-.5px;color:var(--text)}
+.header h1 em{color:var(--teal);font-style:normal}
+.header-sub{font-size:13px;color:var(--text2);margin-top:5px;font-weight:300}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1.5rem}
+@media(min-width:480px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-md);padding:.9rem 1rem;box-shadow:var(--shadow)}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:6px}
+.stat-val{font-size:20px;font-weight:500;font-family:'IBM Plex Mono',monospace;color:var(--teal)}
+.stat-val.plain{color:var(--text);font-size:13px;padding-top:3px;font-family:'IBM Plex Sans',sans-serif}
+.prog-track{height:3px;background:var(--bg3);border-radius:2px;margin-top:8px;overflow:hidden}
+.prog-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .5s}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:1.25rem;padding:.75rem 1rem;background:var(--bg1);border-radius:var(--r-md);border:.5px solid var(--border);box-shadow:var(--shadow)}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.corso-banner{border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:.85rem;box-shadow:var(--shadow)}
+.api-banner{background:var(--bg1);border:.5px solid rgba(144,96,200,.38)}
+.cc-banner{background:var(--bg1);border:.5px solid rgba(224,128,48,.38)}
+.corso-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;margin-bottom:.5rem}
+.api-t{color:var(--api)} .cc-t{color:var(--cc)}
+.corso-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:.5rem}
+.corso-note{font-size:11px;font-family:'IBM Plex Mono',monospace;padding:.45rem .75rem;border-radius:6px}
+.api-note{color:var(--text3);background:var(--api-glow);border-left:2px solid var(--api)}
+.cc-note{color:var(--text3);background:var(--cc-glow);border-left:2px solid var(--cc)}
+.msec{margin-bottom:.85rem;border:.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;background:var(--bg1);box-shadow:var(--shadow)}
+.mhead{display:flex;align-items:center;gap:8px;padding:.9rem 1rem;cursor:pointer;user-select:none;transition:background .15s}
+.mhead:hover{background:var(--bg2)}
+.mnum{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);min-width:22px}
+.mname{font-size:14px;font-weight:500;flex:1;color:var(--text)}
+.mbadge{font-size:9px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;border-radius:20px;white-space:nowrap;letter-spacing:.04em}
+.b-now{background:rgba(42,184,104,.12);color:var(--green);border:.5px solid rgba(42,184,104,.35)}
+.b-next{background:var(--blue-glow);color:var(--blue);border:.5px solid rgba(74,157,224,.35)}
+.b-fut{background:var(--bg3);color:var(--text2);border:.5px solid var(--border2)}
+.b-site{background:var(--pink-glow);color:var(--pink);border:.5px solid rgba(224,72,120,.35)}
+.mwks{font-size:10px;color:var(--text2);font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.mpct{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--teal);min-width:36px;text-align:right}
+.mchev{font-size:10px;color:var(--text2);transition:transform .2s;margin-left:2px}
+.msec.closed .mchev{transform:rotate(-90deg)}
+.msec.closed .mbody{display:none}
+.mbody{border-top:.5px solid var(--border)}
+.sprint{padding:.75rem 1rem;border-bottom:.5px solid var(--border)}
+.sprint:last-child{border-bottom:none}
+.sprint-hd{display:flex;align-items:center;gap:7px;margin-bottom:.5rem}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sname{font-size:12px;font-weight:600;flex:1;color:var(--text)}
+.sdur{font-size:10px;color:var(--text2);font-family:'IBM Plex Mono',monospace}
+.task{display:flex;align-items:flex-start;gap:9px;padding:6px 0 6px 14px;border-radius:6px;cursor:pointer;transition:background .12s}
+.task:hover{background:var(--bg2)}
+.task input[type=checkbox]{margin-top:3px;flex-shrink:0;width:14px;height:14px;accent-color:var(--teal);cursor:pointer}
+.task-body{flex:1;min-width:0}
+.task-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.task-text{font-size:13px;line-height:1.4;color:var(--text)}
+.task.done .task-text{color:var(--text3);text-decoration:line-through}
+.task-note{font-size:11px;color:var(--text2);font-family:'IBM Plex Mono',monospace;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:9px;padding:1px 7px;border-radius:8px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0;letter-spacing:.02em;border:.5px solid transparent}
+.t-home{background:rgba(0,196,160,.12);color:var(--teal);border-color:rgba(0,196,160,.25)}
+.t-work{background:var(--blue-glow);color:var(--blue);border-color:rgba(74,157,224,.25)}
+.t-both{background:var(--amber-glow);color:var(--amber);border-color:rgba(224,148,48,.25)}
+.t-ms{background:var(--pink-glow);color:var(--pink);border-color:rgba(224,72,120,.25)}
+.t-api{background:var(--api-glow);color:var(--api);border-color:rgba(144,96,200,.32)}
+.t-cc{background:var(--cc-glow);color:var(--cc);border-color:rgba(224,128,48,.32)}
+.t-cloud{background:var(--cloud-glow);color:var(--cloud);border-color:rgba(58,144,216,.28)}
+.task.api-task{border-left:2.5px solid rgba(144,96,200,.45);background:rgba(144,96,200,.03)}
+.task.api-task:hover{background:var(--api-glow)}
+.task.cc-task{border-left:2.5px solid rgba(224,128,48,.45);background:rgba(224,128,48,.03)}
+.task.cc-task:hover{background:var(--cc-glow)}
+.task.cloud-task{border-left:2.5px solid rgba(58,144,216,.45);background:rgba(58,144,216,.03)}
+.task.cloud-task:hover{background:var(--cloud-glow)}
+.gantt-box{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1rem;margin-bottom:1.25rem;overflow-x:auto;box-shadow:var(--shadow)}
+.gantt-sec-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.1em;margin-bottom:.85rem}
+.gwks{display:flex;margin-bottom:4px;padding-left:112px}
+.gwk{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text2);flex:1;text-align:center}
+.grow{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.glbl{font-size:10px;color:var(--text);font-family:'IBM Plex Mono',monospace;min-width:104px;flex-shrink:0;white-space:nowrap}
+.gtrack{flex:1;height:18px;background:var(--bg2);border-radius:3px;position:relative;border:.5px solid var(--border)}
+.gbar{position:absolute;top:2px;height:14px;border-radius:2px;display:flex;align-items:center;padding:0 5px;font-size:9px;font-family:'IBM Plex Mono',monospace;white-space:nowrap;overflow:hidden}
+.install-banner{display:none;background:var(--teal-glow);border:.5px solid rgba(0,196,160,.3);border-radius:var(--r-md);padding:.85rem 1rem;margin-bottom:1.25rem;align-items:center;gap:10px}
+.install-banner.show{display:flex}
+.install-text{flex:1;font-size:13px} .install-text strong{color:var(--teal)}
+.ibtn{padding:5px 14px;background:var(--teal);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.ibtn-close{background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px}
+.footer-note{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-md);padding:.85rem 1rem;font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:1rem;box-shadow:var(--shadow)}
+.footer-note strong{color:var(--teal)}
+.reset-btn{background:transparent;border:.5px solid var(--border2);color:var(--text3);padding:4px 12px;border-radius:6px;font-size:11px;font-family:'IBM Plex Mono',monospace;cursor:pointer;display:block;margin:0 auto}
+.reset-btn:hover{border-color:var(--text2);color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="install-banner" id="install-banner">
+  <div class="install-text"><strong>Installa app</strong> — aggiungila alla schermata home</div>
+  <button class="ibtn" id="install-btn">Installa</button>
+  <button class="ibtn-close" onclick="document.getElementById('install-banner').classList.remove('show')">x</button>
+</div>
+
+<div class="header">
+  <div class="brand-row">
+    <span class="brand-badge">WELDAIM.AI</span>
+    <span class="brand-badge" style="color:var(--blue);background:var(--blue-glow);border-color:rgba(74,157,224,.28)">MODULO 1</span>
+  </div>
+  <h1>Welding Book <em>Agent</em></h1>
+  <div class="header-sub">Piano operativo · avviato <span id="start-date"></span></div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-lbl">COMPLETAMENTO</div><div class="stat-val" id="pct-v">0%</div><div class="prog-track"><div class="prog-fill" id="pct-fill" style="width:0%"></div></div></div>
+  <div class="stat"><div class="stat-lbl">TASK</div><div class="stat-val" id="done-v">0/0</div></div>
+  <div class="stat"><div class="stat-lbl">SETTIMANE</div><div class="stat-val">14</div></div>
+  <div class="stat"><div class="stat-lbl">PRIMA DEMO</div><div class="stat-val plain" id="demo-v"></div></div>
+</div>
+
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:var(--teal)"></div>PC casa (mattina)</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--blue)"></div>PC lavoro (pranzo)</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>Entrambi</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--pink)"></div>Milestone</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--api)"></div>Corso: Building with Claude API</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--cc)"></div>Corso: Claude Code 101</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--cloud)"></div>Railway / Cloud</div>
+</div>
+
+<div class="corso-banner api-banner">
+  <div class="corso-title api-t">CORSO 1 — BUILDING WITH THE CLAUDE API · anthropic.skilljar.com</div>
+  <div class="corso-desc">Il corso principale per costruire WeldAIM. 84 lezioni, 8+ ore. Copre API, prompt engineering, tool use, RAG, agenti. Studia ogni modulo <strong>prima</strong> di scrivere il codice corrispondente.</div>
+  <div class="corso-note api-note">anthropic.skilljar.com/claude-with-the-anthropic-api · Gratuito · Certificato incluso</div>
+</div>
+
+<div class="corso-banner cc-banner">
+  <div class="corso-title cc-t">CORSO 2 — CLAUDE CODE 101 · anthropic.skilljar.com</div>
+  <div class="corso-desc">Strumento di sviluppo quotidiano. 4 capitoli, 3 ore. Workflow Explore-Plan-Code-Commit, CLAUDE.md, subagenti, MCP e hook. Da studiare in settimana 2 prima di iniziare a usare Claude Code.</div>
+  <div class="corso-note cc-note">anthropic.skilljar.com/claude-code-101 · Gratuito · Certificato incluso</div>
+</div>
+
+<div id="ms-container"></div>
+
+<div class="gantt-box">
+  <div class="gantt-sec-lbl">GANTT — 14 SETTIMANE</div>
+  <div id="gantt"></div>
+</div>
+
+<div class="footer-note">
+  <strong>Installare sul telefono:</strong><br>
+  iPhone/Safari: Condividi > Aggiungi a schermata Home &nbsp;·&nbsp; Android/Chrome: tre puntini > Aggiungi a schermata Home<br>
+  I progressi vengono salvati automaticamente nel browser.
+</div>
+<button class="reset-btn" onclick="resetAll()">reset progressi</button>
+</div>
+
+<script>
+const DATA=[
+{id:'m1',title:'Setup + prima chiamata API',badge:'b-now',bl:'COMPLETATO',weeks:'Sett. 1-2',col:'#00c4a0',gs:0,gl:2,
+ sprints:[
+  {n:'Sprint A — ambiente + credenziali',dot:'#00c4a0',d:'fatto',tasks:[
+    {id:'a1',t:'Installare Python 3.11+ e VS Code',n:'python.org + code.visualstudio.com',pc:'home'},
+    {id:'a2',t:'Creare account Anthropic Console',n:'console.anthropic.com — gratuito',pc:'both'},
+    {id:'a3',t:'Generare API Key e salvarla in .env',n:'Mai scrivere la key nel codice sorgente',pc:'home'},
+    {id:'a4',t:'Acquistare crediti Anthropic ($5 min)',n:'Console -> Billing -> Add credits',pc:'both'},
+    {id:'a5',t:'pip install anthropic python-dotenv',n:'Prima libreria del progetto',pc:'home'},
+  ]},
+  {n:'Sprint B — prima risposta + system prompt',dot:'#00c4a0',d:'fatto',tasks:[
+    {id:'b1',t:'Script test_api.py — Claude risponde nel terminale',n:'Prima chiamata API funzionante',pc:'home'},
+    {id:'b2',t:'MILESTONE: prima risposta API ricevuta',n:'Completato il 2026-04-19',pc:'ms'},
+    {id:'b3',t:'Aggiungere system prompt esperto welding',n:'Ruolo + correzioni dominio validate da IWE',pc:'home'},
+    {id:'b4',t:'Creare file correzioni_dominio.txt',n:'Log errori AI validati — vantaggio competitivo',pc:'home'},
+    {id:'b_a1',t:'API · Intro · Welcome to the course',n:'Panoramica struttura e obiettivi del corso',pc:'work',api:true},
+    {id:'b_a2',t:'API · Intro · Anthropic overview',n:'Chi e Anthropic, filosofia e approccio',pc:'work',api:true},
+    {id:'b_a3',t:'API · Intro · Overview of Claude models',n:'Opus, Sonnet, Haiku — differenze e quando usarli',pc:'work',api:true},
+    {id:'b_a4',t:'API · Accesso · Accessing the API',n:'Setup autenticazione e configurazione richieste',pc:'work',api:true},
+    {id:'b_a5',t:'API · Accesso · Getting an API key',n:'Generare e gestire la chiave API in sicurezza',pc:'work',api:true},
+    {id:'b_a6',t:'API · Accesso · Making a request',n:'Prima chiamata API — spiega cosa hai costruito in test_api.py',pc:'work',api:true},
+    {id:'b_a7',t:'API · Accesso · System prompts',n:'Configurare il comportamento del modello',pc:'work',api:true},
+    {id:'b_a8',t:'API · Accesso · System prompts exercise',n:'Esercizio pratico sui system prompt',pc:'work',api:true},
+    {id:'b_a9',t:'API · Accesso · Temperature',n:'Controllo variabilita delle risposte',pc:'work',api:true},
+    {id:'b_a10',t:'API · Accesso · Quiz on accessing Claude with the API',n:'Verifica comprensione modulo accesso',pc:'work',api:true},
+    {id:'b_cc1',t:'CC101 · Cap.1 · What is Claude Code? (video)',n:'Differenza tra chat AI e coding agent — cos\'e l\'agentic loop',pc:'work',cc:true},
+    {id:'b_cc2',t:'CC101 · Cap.1 · How Claude Code works (video)',n:'Context window, tools e permissions',pc:'work',cc:true},
+    {id:'b_cc3',t:'CC101 · Cap.1 · The Agentic Loop (esercizio)',n:'Quiz: ciclo percepisce-decide-agisce',pc:'work',cc:true},
+    {id:'b_cc4',t:'CC101 · Cap.2 · Installing Claude Code (video)',n:'Installazione su terminale, VS Code, Claude Desktop',pc:'work',cc:true},
+    {id:'b_cc5',t:'CC101 · Cap.2 · Installing Claude Code (esercizio)',n:'Verifica installazione nel tuo ambiente Windows',pc:'work',cc:true},
+    {id:'b_cc6',t:'CC101 · Cap.2 · Launch Claude Code (esercizio)',n:'Primo avvio — esplora il progetto WeldAIM',pc:'work',cc:true},
+    {id:'b_cc7',t:'CC101 · Cap.2 · Your first prompt (video)',n:'Come scrivere prompt efficaci da terminale',pc:'work',cc:true},
+    {id:'b_cc8',t:'CC101 · Cap.2 · Claude Code Agentic Capabilities (esercizio)',n:'Sperimenta le capacita agentiche su un file WeldAIM',pc:'work',cc:true},
+    {id:'b_cc9',t:'CC101 · Cap.2 · Plan a Code Change Before Writing Code (esercizio)',n:'Plan Mode: Claude propone, tu approvi',pc:'work',cc:true},
+  ]},
+ ]},
+
+{id:'m2',title:'RAG — Claude legge i PDF normativi',badge:'b-next',bl:'PROSSIMO',weeks:'Sett. 3-6',col:'#4a9de0',gs:2,gl:4,
+ sprints:[
+  {n:'Sprint C — lettura PDF',dot:'#4a9de0',d:'~1.5 sett.',tasks:[
+    {id:'c1',t:'pip install pymupdf — lettura PDF',n:'Gratuita, gira in locale',pc:'home'},
+    {id:'c2',t:'Script estrae testo dal QT.6495.022',n:'Test: stampa prime 500 parole nel terminale',pc:'home'},
+    {id:'c3',t:'Inviare testo estratto a Claude con domanda',n:'Es: cosa richiede CL1 per i mock-up?',pc:'home'},
+    {id:'c_a1',t:'API · Accesso · Multi-Turn conversations',n:'Conversazioni multi-turno — base per agente interattivo',pc:'work',api:true},
+    {id:'c_a2',t:'API · Accesso · Chat exercise',n:'Esercizio: costruisci una chat multi-turno',pc:'work',api:true},
+    {id:'c_a3',t:'API · Accesso · Response streaming',n:'Risposte in tempo reale nella UI — effetto professionale',pc:'work',api:true},
+    {id:'c_a4',t:'API · Accesso · Structured data',n:'Output JSON strutturato — fondamentale per report automatici',pc:'work',api:true},
+    {id:'c_a5',t:'API · Accesso · Structured data exercise',n:'Esercizio pratico: genera output JSON validato',pc:'work',api:true},
+    {id:'c_a6',t:'API · Prompt Eval · Prompt evaluation',n:'Come misurare la qualita dei prompt degli agenti',pc:'work',api:true},
+    {id:'c_a7',t:'API · Prompt Eval · A typical eval workflow',n:'Flusso standard valutazione — applica a WeldAIM',pc:'work',api:true},
+    {id:'c_a8',t:'API · Prompt Eval · Generating test datasets',n:'Creare dataset di test per i 5 agenti WeldAIM',pc:'work',api:true},
+    {id:'c_a9',t:'API · Prompt Eval · Running the eval',n:'Eseguire la valutazione in automatico',pc:'work',api:true},
+    {id:'c_a10',t:'API · Prompt Eval · Model based grading',n:'Usare Claude per valutare le risposte degli agenti',pc:'work',api:true},
+    {id:'c_a11',t:'API · Prompt Eval · Code based grading',n:'Valutazione automatica via codice Python',pc:'work',api:true},
+    {id:'c_a12',t:'API · Prompt Eval · Exercise on prompt evals',n:'Esercizio completo di valutazione',pc:'work',api:true},
+    {id:'c_a13',t:'API · Prompt Eval · Quiz on prompt evaluation',n:'Verifica comprensione modulo eval',pc:'work',api:true},
+    {id:'c_a14',t:'API · Prompt Eng. · Prompt engineering',n:'Introduzione alle tecniche avanzate di prompting',pc:'work',api:true},
+    {id:'c_a15',t:'API · Prompt Eng. · Being clear and direct',n:'Istruzioni precise — migliora i prompt agenti WeldAIM',pc:'work',api:true},
+    {id:'c_a16',t:'API · Prompt Eng. · Being specific',n:'Specificita negli output — es. formato NC report',pc:'work',api:true},
+    {id:'c_a17',t:'API · Prompt Eng. · Structure with XML tags',n:'Tag XML per output strutturati — usali nei 5 agenti',pc:'work',api:true},
+    {id:'c_a18',t:'API · Prompt Eng. · Providing examples',n:'Few-shot prompting — es. NC corrette vs errate',pc:'work',api:true},
+    {id:'c_a19',t:'API · Prompt Eng. · Exercise on prompting',n:'Esercizio completo di prompt engineering',pc:'work',api:true},
+    {id:'c_a20',t:'API · Prompt Eng. · Quiz on prompt engineering techniques',n:'Verifica comprensione modulo prompting',pc:'work',api:true},
+  ]},
+  {n:'Sprint D — database vettoriale RAG',dot:'#4a9de0',d:'~2.5 sett.',tasks:[
+    {id:'d1',t:'pip install chromadb — DB vettoriale locale',n:'Zero costi, gira sul tuo PC',pc:'home'},
+    {id:'d2',t:'Dividere i 3 PDF in chunk da 400 parole',n:'Funzione commentata riga per riga',pc:'home'},
+    {id:'d3',t:'Salvare chunk nel database vettoriale',n:'I documenti diventano interrogabili',pc:'home'},
+    {id:'d4',t:'Query: trova chunk rilevanti per una domanda',n:'Es: requisiti mock-up -> paragrafo esatto',pc:'home'},
+    {id:'d5',t:'MILESTONE: Claude risponde citando paragrafo sorgente',n:'Cuore del prodotto — RAG funzionante',pc:'ms'},
+    {id:'d_a1',t:'API · RAG · Introducing Retrieval Augmented Generation',n:'La teoria dietro quello che stai costruendo',pc:'work',api:true},
+    {id:'d_a2',t:'API · RAG · Text chunking strategies',n:'Come dividere i PDF — spiega il perche dei chunk da 400 parole',pc:'work',api:true},
+    {id:'d_a3',t:'API · RAG · Text embeddings',n:'Come funziona la ricerca semantica nei documenti',pc:'work',api:true},
+    {id:'d_a4',t:'API · RAG · The full RAG flow',n:'Il ciclo completo retrieval-augment-generate',pc:'work',api:true},
+    {id:'d_a5',t:'API · RAG · Implementing the RAG flow',n:'Implementazione pratica — segui il codice',pc:'work',api:true},
+    {id:'d_a6',t:'API · RAG · BM25 lexical search',n:'Ricerca lessicale alternativa — complementare agli embeddings',pc:'work',api:true},
+    {id:'d_a7',t:'API · RAG · A Multi-Index RAG pipeline',n:'Pipeline multi-indice — norme ISO + linee guida Geismar',pc:'work',api:true},
+  ]},
+ ]},
+
+{id:'m3',title:'5 agenti specializzati Welding Book',badge:'b-next',bl:'FASE 3',weeks:'Sett. 7-10',col:'#8060d8',gs:6,gl:4,
+ sprints:[
+  {n:'Fondamenta — architettura multi-agente',dot:'#8060d8',d:'studio',tasks:[
+    {id:'e_cc1',t:'CC101 · Cap.3 · The Explore-Plan-Code-Commit workflow (video)',n:'Il workflow principale che userai ogni mattina di sviluppo',pc:'work',cc:true},
+    {id:'e_cc2',t:'CC101 · Cap.3 · Explore-Plan-Code-Commit workflow (esercizio)',n:'Applica il workflow su un task reale WeldAIM',pc:'work',cc:true},
+    {id:'e_cc3',t:'CC101 · Cap.3 · Follow the Explore-Plan-Code-Commit Workflow (esercizio)',n:'Sessione completa guidata su un agente WeldAIM',pc:'work',cc:true},
+    {id:'e_cc4',t:'CC101 · Cap.3 · Context management (video)',n:'Comandi /compact /clear /context — sessioni lunghe produttive',pc:'work',cc:true},
+    {id:'e_cc5',t:'CC101 · Cap.3 · Check and Compact Your Context Window (esercizio)',n:'Pratica: gestisci il contesto su una sessione lunga',pc:'work',cc:true},
+    {id:'e_cc6',t:'CC101 · Cap.3 · Code review (video)',n:'Come usare Claude Code per review prima del push',pc:'work',cc:true},
+    {id:'e_cc7',t:'CC101 · Cap.3 · Subagent Code Review Before You Share (esercizio)',n:'Review subagente prima di ogni push su GitHub',pc:'work',cc:true},
+    {id:'e_a1',t:'API · Tool Use · Introducing tool use',n:'Come Claude usa strumenti esterni — base per gli agenti',pc:'work',api:true},
+    {id:'e_a2',t:'API · Tool Use · Project overview',n:'Panoramica progetto tool use — architettura WeldAIM',pc:'work',api:true},
+    {id:'e_a3',t:'API · Tool Use · Tool functions',n:'Definire funzioni Python che Claude puo chiamare',pc:'work',api:true},
+    {id:'e_a4',t:'API · Tool Use · Tool schemas',n:'Schema JSON dei tool — strutturare input/output agenti',pc:'work',api:true},
+    {id:'e_a5',t:'API · Tool Use · Handling message blocks',n:'Gestire i blocchi di risposta con chiamate tool',pc:'work',api:true},
+    {id:'e_a6',t:'API · Tool Use · Sending tool results',n:'Restituire risultati a Claude dopo esecuzione tool',pc:'work',api:true},
+    {id:'e_a7',t:'API · Tool Use · Multi-turn conversations with tools',n:'Conversazioni multi-turno con tool attivi',pc:'work',api:true},
+    {id:'e_a8',t:'API · Tool Use · Implementing multiple turns',n:'Implementazione pratica multi-turno con tool',pc:'work',api:true},
+    {id:'e_a9',t:'API · Tool Use · Using multiple tools',n:'Piu tool in parallelo — es. 5 agenti WeldAIM',pc:'work',api:true},
+    {id:'e_a10',t:'API · Tool Use · Fine grained tool calling',n:'Controllo fine sull\'esecuzione dei tool',pc:'work',api:true},
+    {id:'e_a11',t:'API · Tool Use · Quiz on tool use with Claude',n:'Verifica comprensione modulo tool use',pc:'work',api:true},
+    {id:'e_a12',t:'API · Agenti · Agents and workflows',n:'Introduzione ai pattern agentici — architettura WeldAIM',pc:'work',api:true},
+    {id:'e_a13',t:'API · Agenti · Parallelization workflows',n:'5 agenti in parallelo — tutti i check simultanei',pc:'work',api:true},
+    {id:'e_a14',t:'API · Agenti · Chaining workflows',n:'Agenti in sequenza — output di uno e input del prossimo',pc:'work',api:true},
+    {id:'e_a15',t:'API · Agenti · Routing workflows',n:'Agente supervisore che smista ai 5 specializzati',pc:'work',api:true},
+    {id:'e_a16',t:'API · Agenti · Agents and tools',n:'Combinare agenti con tool use — cuore di WeldAIM',pc:'work',api:true},
+    {id:'e_a17',t:'API · Agenti · Environment inspection',n:'Agenti che ispezionano l\'ambiente — es. verifica file',pc:'work',api:true},
+    {id:'e_a18',t:'API · Agenti · Workflows vs agents',n:'Quando usare workflow fisso vs agente autonomo',pc:'work',api:true},
+    {id:'e_a19',t:'API · Agenti · Quiz on Agents and Workflows',n:'Verifica comprensione modulo agenti',pc:'work',api:true},
+  ]},
+  {n:'Agente 1 — WPS + WPQR (cartelle 01-02)',dot:'#8060d8',d:'~1 sett.',tasks:[
+    {id:'e1',t:'Verifica corrispondenza 1:1 WPS/WPQR',n:'ISO 15609 + ISO 15614 + QT.6495.024 §1-2',pc:'home'},
+    {id:'e2',t:'Controllo firma/data CS su ogni documento',n:'NC se manca approvazione CS',pc:'home'},
+    {id:'e3',t:'Date WPS >= data WPQR collegata',n:'Regola cronologica obbligatoria',pc:'home'},
+  ]},
+  {n:'Agente 2 — Qualifiche saldatori (cartella 03)',dot:'#8060d8',d:'~1 sett.',tasks:[
+    {id:'e4',t:'Estrae date scadenza da ogni qualifica',n:'ISO 9606 + ISO 14732',pc:'home'},
+    {id:'e5',t:'Flag qualifiche scadute o in scadenza 30gg',n:'Confronto automatico con data oggi',pc:'home'},
+    {id:'e6',t:'Verifica copertura qualifiche vs giunti su disegno',n:'WQ connesse al manufatto specifico',pc:'home'},
+  ]},
+  {n:'Agente 3 — Mock-up + Visual test (07-09)',dot:'#8060d8',d:'~1 sett.',tasks:[
+    {id:'e7',t:'Almeno 2 mock-up per azienda — saldatori giunti soggetti',n:'Non tutti i saldatori — solo chi esegue giunti mock-up',pc:'home'},
+    {id:'e8',t:'Report mock-up: 2 foto macro, ingrand. 2.5x-10x',n:'QT.6495.023',pc:'home'},
+    {id:'e9',t:'Visual test: cert. ISO 17637 + firma CS + data post-produzione',n:'Data VT successiva a produzione nel PFC',pc:'home'},
+    {id:'e10',t:'VT: riferimento disegno + Serial Number manufatto',n:'Tracciabilita obbligatoria',pc:'home'},
+  ]},
+  {n:'Agente 4 — Materiali + Certificati (06-08)',dot:'#8060d8',d:'~0.5 sett.',tasks:[
+    {id:'e11',t:'Materiale base: cert. 3.1 EN 10204 + DOP',n:'Tubolari: + CPR aggiuntivo',pc:'home'},
+    {id:'e12',t:'Materiale apporto: cert. 3.1 + 2.2 produttore',n:'Presente su joincert.eu con posizioni valide',pc:'home'},
+    {id:'e13',t:'Apporto scaduto: verifica data acquisto ante scadenza',n:'Accettabile se acquisto ante scadenza — richiede prova',pc:'home'},
+  ]},
+  {n:'Agente 5 — PFC + EN15085 + Saldatrici (11-13)',dot:'#8060d8',d:'~0.5 sett.',tasks:[
+    {id:'e14',t:'PFC: tutti i campi obbligatori presenti',n:'EN 15085-5 + QT.6495.024 §11',pc:'home'},
+    {id:'e15',t:'Data PFC >= data WPS, Mock-up, WQ, Materiali',n:'Regola cronologica obbligatoria',pc:'home'},
+    {id:'e16',t:'Cert. EN 15085-2 valido su joincert.eu',n:'Processi coperti = WPQR presentate',pc:'home'},
+    {id:'e17',t:'Saldatrici calibrate IEC 60974-14 — scadenze ok',n:'QT.6495.024 §13',pc:'home'},
+  ]},
+  {n:'Agente supervisore — output finale',dot:'#8060d8',d:'~1 sett.',tasks:[
+    {id:'e18',t:'Supervisore aggrega NC dai 5 agenti specializzati',n:'Un unico report strutturato per CL',pc:'home'},
+    {id:'e19',t:'Semaforo GO / ATTENZIONE / STOP produzione',n:'Azioni correttive ITA+ENG gia scritte',pc:'home'},
+    {id:'e20',t:'MILESTONE: primo welding book reale analizzato',n:'Test con documento di fornitore reale',pc:'ms'},
+    {id:'e_a20',t:'API · Features · PDF support',n:'Claude legge PDF nativamente — feature avanzata per WeldAIM',pc:'work',api:true},
+    {id:'e_a21',t:'API · Features · Citations',n:'Output con citazioni — tracciabilita NC per paragrafo sorgente',pc:'work',api:true},
+    {id:'e_a22',t:'API · Features · Prompt caching',n:'Riduce costi su normative richiamate spesso',pc:'work',api:true},
+    {id:'e_a23',t:'API · Features · Prompt caching in action',n:'Implementazione pratica caching su QT.6495.022/023/024',pc:'work',api:true},
+    {id:'e_a24',t:'API · Features · Code execution and the Files API',n:'Gestione upload file — rilevante per upload PDF welding book',pc:'work',api:true},
+    {id:'e_a25',t:'API · Features · Quiz on features of Claude',n:'Verifica comprensione modulo features',pc:'work',api:true},
+    {id:'e_cc8',t:'CC101 · Cap.4 · The CLAUDE.md file (video)',n:'Memoria persistente del progetto — convenzioni WeldAIM',pc:'work',cc:true},
+    {id:'e_cc9',t:'CC101 · Cap.4 · Give Claude Persistent Project Memory (esercizio)',n:'Scrivi il CLAUDE.md per WeldAIM con regole di dominio',pc:'work',cc:true},
+    {id:'e_cc10',t:'CC101 · Cap.4 · Subagents (video)',n:'Delegare task a sotto-agenti — pattern core di WeldAIM',pc:'work',cc:true},
+    {id:'e_cc11',t:'CC101 · Cap.4 · Delegate Exploration to a Subagent (esercizio)',n:'Crea subagente che analizza una cartella del Welding Book',pc:'work',cc:true},
+    {id:'e_cc12',t:'CC101 · Cap.4 · Skills (video)',n:'Skill riutilizzabili — es. skill verifica WPS per WeldAIM',pc:'work',cc:true},
+    {id:'e_cc13',t:'CC101 · Cap.4 · Use a Skill to Generate a Station Report (esercizio)',n:'Costruisci una skill per generare il report NC',pc:'work',cc:true},
+    {id:'e_cc14',t:'CC101 · Cap.4 · MCP (video)',n:'Connettere Claude Code a database esterni — Railway in futuro',pc:'work',cc:true},
+    {id:'e_cc15',t:'CC101 · Cap.4 · Connect Claude to Your Records Database (esercizio)',n:'Connetti Claude Code a ChromaDB via MCP',pc:'work',cc:true},
+    {id:'e_cc16',t:'CC101 · Cap.4 · Hooks (video)',n:'Guardrail automatici — blocca modifiche non autorizzate',pc:'work',cc:true},
+    {id:'e_cc17',t:'CC101 · Cap.4 · Enforce Formatting on Every File Edit (esercizio)',n:'Hook: formattazione automatica ad ogni modifica file',pc:'work',cc:true},
+  ]},
+ ]},
+
+{id:'m4',title:'Web app Streamlit + export PDF',badge:'b-fut',bl:'FASE 4',weeks:'Sett. 10-12',col:'#e09430',gs:9,gl:3,
+ sprints:[
+  {n:'Sprint web app',dot:'#e09430',d:'~3 sett.',tasks:[
+    {id:'f1',t:'pip install streamlit — web app senza HTML/CSS',n:'Framework Python piu semplice — zero design',pc:'home'},
+    {id:'f2',t:'Upload PDF welding book + selezione CL1/CL2/CL3',n:'Form drag and drop',pc:'home'},
+    {id:'f3',t:'Tabella NC con semaforo per cartella',n:'Prima UI professionale',pc:'home'},
+    {id:'f4',t:'Export report PDF doppia lingua ITA/ENG',n:'pip install reportlab',pc:'home'},
+    {id:'f5',t:'MILESTONE: demo con primo cliente reale',n:'Raccogliere feedback e iterare',pc:'ms'},
+    {id:'f_r1',t:'RAILWAY: creare account su railway.app',n:'Gratuito — $5 crediti/mese inclusi, nessuna carta richiesta',pc:'both',cloud:true},
+    {id:'f_r2',t:'RAILWAY: collegare repo GitHub a Railway',n:'Deploy automatico ad ogni push — 10 minuti di setup',pc:'home',cloud:true},
+    {id:'f_r3',t:'RAILWAY: primo deploy Streamlit su Railway',n:'La tua app diventa accessibile da browser ovunque',pc:'home',cloud:true},
+    {id:'f_r4',t:'RAILWAY: collegare dominio weldaim.ai al server',n:'DNS pointing da registrar verso Railway — ~15 min',pc:'both',cloud:true},
+    {id:'f_a1',t:'API · Apps · Anthropic apps',n:'Panoramica Claude Code e Computer Use come tool di deploy',pc:'work',api:true},
+    {id:'f_a2',t:'API · Apps · Claude Code setup',n:'Setup Claude Code per task di sviluppo automatizzati',pc:'work',api:true},
+    {id:'f_a3',t:'API · Apps · Claude Code in action',n:'Claude Code in azione su task reali — applica a Streamlit',pc:'work',api:true},
+    {id:'f_a4',t:'API · Apps · Enhancements with MCP servers',n:'Potenziare Claude Code con server MCP — Railway e DB',pc:'work',api:true},
+    {id:'f_a5',t:'API · Final · Final Assessment',n:'Assessment finale — certifica le competenze API',pc:'work',api:true},
+    {id:'f_a6',t:'API · Final · Course Wrap Up',n:'Riepilogo e prossimi passi — pianifica MCP e agenti avanzati',pc:'work',api:true},
+  ]},
+ ]},
+
+{id:'m5',title:'Sito weldaim.ai — vetrina e lead capture',badge:'b-site',bl:'IN PARALLELO',weeks:'Sett. 6-8',col:'#e04878',gs:5,gl:3,
+ sprints:[
+  {n:'Sito web — Framer o Webflow (zero codice)',dot:'#e04878',d:'~2 sett.',tasks:[
+    {id:'g1',t:'Scegliere piattaforma: Framer (consigliato) o Webflow',n:'Entrambi drag-and-drop, piano free',pc:'both'},
+    {id:'g2',t:'Homepage: problema + soluzione + form contatti',n:'Niente prezzi ancora — solo lead capture',pc:'both'},
+    {id:'g3',t:'Collegare dominio weldaim.ai al sito',n:'DNS redirect — 15 minuti su Framer',pc:'both'},
+    {id:'g4',t:'Pagina come funziona con i 3 moduli',n:'Racconta la visione del prodotto',pc:'both'},
+    {id:'g5',t:'MILESTONE: sito live su weldaim.ai',n:'Da qui esisti sul mercato',pc:'ms'},
+  ]},
+ ]},
+];
+
+const TOTAL_WEEKS=14;
+
+function init(){
+  const d=new Date(2026,3,19);
+  document.getElementById('start-date').textContent=d.toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'});
+  const demo=new Date(d.getTime()+98*24*60*60*1000);
+  document.getElementById('demo-v').textContent=demo.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+  buildMS(); buildGantt(); loadState(); setupPWA();
+}
+
+function buildMS(){
+  const c=document.getElementById('ms-container');
+  DATA.forEach((m,i)=>{
+    const allT=m.sprints.flatMap(s=>s.tasks);
+    const div=document.createElement('div');
+    div.className='msec'; div.id=m.id;
+    div.innerHTML=`<div class="mhead" onclick="togM('${m.id}')">
+      <div class="mnum">M${i+1}</div>
+      <div class="mname">${m.title}</div>
+      <div class="mbadge ${m.badge}">${m.bl}</div>
+      <div class="mwks">${m.weeks}</div>
+      <div class="mpct" id="mp-${m.id}">0/${allT.length}</div>
+      <div class="mchev">v</div>
+    </div>`;
+    const body=document.createElement('div'); body.className='mbody';
+    m.sprints.forEach(s=>{
+      const sb=document.createElement('div'); sb.className='sprint';
+      const sh=document.createElement('div'); sh.className='sprint-hd';
+      sh.innerHTML=`<div class="sdot" style="background:${s.dot}"></div><div class="sname">${s.n}</div><div class="sdur">${s.d}</div>`;
+      sb.appendChild(sh);
+      s.tasks.forEach(t=>{
+        const label=document.createElement('label');
+        const cls=t.api?'api-task':t.cc?'cc-task':t.cloud?'cloud-task':'';
+        label.className='task'+(cls?' '+cls:''); label.id='tl-'+t.id;
+        const cb=document.createElement('input'); cb.type='checkbox'; cb.id='cb-'+t.id;
+        cb.addEventListener('change',()=>onCheck(t.id,m.id,cb.checked));
+        const bd=document.createElement('div'); bd.className='task-body';
+        const tl=document.createElement('div'); tl.className='task-line';
+        const tx=document.createElement('span'); tx.className='task-text'; tx.textContent=t.t;
+        const tg=document.createElement('span');
+        let tagClass,tagText;
+        if(t.api){tagClass='t-api';tagText='API corso';}
+        else if(t.cc){tagClass='t-cc';tagText='CC101 corso';}
+        else if(t.cloud){tagClass='t-cloud';tagText='railway';}
+        else if(t.pc==='home'){tagClass='t-home';tagText='casa';}
+        else if(t.pc==='work'){tagClass='t-work';tagText='lavoro';}
+        else if(t.pc==='both'){tagClass='t-both';tagText='entrambi';}
+        else{tagClass='t-ms';tagText='milestone';}
+        tg.className='tag '+tagClass; tg.textContent=tagText;
+        tl.appendChild(tx); tl.appendChild(tg);
+        const tn=document.createElement('div'); tn.className='task-note'; tn.textContent=t.n;
+        bd.appendChild(tl); bd.appendChild(tn);
+        label.appendChild(cb); label.appendChild(bd);
+        sb.appendChild(label);
+      });
+      body.appendChild(sb);
+    });
+    div.appendChild(body); c.appendChild(div);
+  });
+}
+
+function togM(id){document.getElementById(id).classList.toggle('closed');}
+
+function buildGantt(){
+  const g=document.getElementById('gantt');
+  const hw=document.createElement('div'); hw.className='gwks';
+  for(let i=1;i<=TOTAL_WEEKS;i++){const w=document.createElement('div');w.className='gwk';w.textContent='W'+i;hw.appendChild(w);}
+  g.appendChild(hw);
+  const bars=[
+    {l:'Setup + API',s:0,len:2,c:'#00c4a0'},
+    {l:'Corso API',s:0,len:10,c:'#9060c8'},
+    {l:'Claude Code 101',s:1,len:6,c:'#e08030'},
+    {l:'RAG engine',s:2,len:4,c:'#4a9de0'},
+    {l:'5 agenti WB',s:6,len:4,c:'#8060d8'},
+    {l:'Sito weldaim',s:5,len:3,c:'#e04878'},
+    {l:'Web app',s:9,len:3,c:'#e09430'},
+    {l:'Railway deploy',s:9,len:5,c:'#3a90d8'},
+    {l:'Demo + lancio',s:11,len:3,c:'#00c4a0'},
+  ];
+  bars.forEach(b=>{
+    const r=document.createElement('div'); r.className='grow';
+    const lbl=document.createElement('div'); lbl.className='glbl'; lbl.textContent=b.l;
+    const track=document.createElement('div'); track.className='gtrack';
+    const bar=document.createElement('div'); bar.className='gbar';
+    bar.style.left=((b.s/TOTAL_WEEKS)*100)+'%';
+    bar.style.width=((b.len/TOTAL_WEEKS)*100)+'%';
+    bar.style.background=b.c+'20'; bar.style.border='.5px solid '+b.c+'80'; bar.style.color=b.c;
+    bar.textContent=b.len+'w';
+    track.appendChild(bar); r.appendChild(lbl); r.appendChild(track); g.appendChild(r);
+  });
+}
+
+function loadState(){
+  const COMPLETED=['a1','a2','a3','a4','a5','b1','b2','b3','b4'];
+  const sv=JSON.parse(localStorage.getItem('weldai_v4')||'{}');
+  COMPLETED.forEach(id=>{if(!(id in sv))sv[id]=true;});
+  localStorage.setItem('weldai_v4',JSON.stringify(sv));
+  DATA.forEach(m=>m.sprints.forEach(s=>s.tasks.forEach(t=>{
+    if(sv[t.id]){
+      const cb=document.getElementById('cb-'+t.id);
+      const tl=document.getElementById('tl-'+t.id);
+      if(cb)cb.checked=true; if(tl)tl.classList.add('done');
+    }
+  })));
+  updateProg();
+}
+
+function onCheck(id,mid,checked){
+  const tl=document.getElementById('tl-'+id);
+  if(tl)checked?tl.classList.add('done'):tl.classList.remove('done');
+  const sv=JSON.parse(localStorage.getItem('weldai_v4')||'{}');
+  sv[id]=checked; localStorage.setItem('weldai_v4',JSON.stringify(sv)); updateProg();
+}
+
+function updateProg(){
+  const all=DATA.flatMap(m=>m.sprints.flatMap(s=>s.tasks.map(t=>t.id)));
+  const tot=all.length;
+  const done=all.filter(id=>document.getElementById('cb-'+id)?.checked).length;
+  const pct=tot?Math.round((done/tot)*100):0;
+  document.getElementById('pct-v').textContent=pct+'%';
+  document.getElementById('pct-fill').style.width=pct+'%';
+  document.getElementById('done-v').textContent=done+'/'+tot;
+  DATA.forEach(m=>{
+    const ids=m.sprints.flatMap(s=>s.tasks.map(t=>t.id));
+    const md=ids.filter(id=>document.getElementById('cb-'+id)?.checked).length;
+    const el=document.getElementById('mp-'+m.id); if(el)el.textContent=md+'/'+ids.length;
+  });
+}
+
+function resetAll(){
+  if(!confirm('Azzerare tutti i progressi?'))return;
+  localStorage.removeItem('weldai_v4');
+  document.querySelectorAll('.task').forEach(t=>t.classList.remove('done'));
+  document.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.checked=false);
+  updateProg();
+}
+
+let deferredPrompt=null;
+function setupPWA(){
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault(); deferredPrompt=e;
+    document.getElementById('install-banner').classList.add('show');
+    document.getElementById('install-btn').addEventListener('click',()=>{
+      deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>{
+        deferredPrompt=null; document.getElementById('install-banner').classList.remove('show');
+      });
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>

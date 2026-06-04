@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeldAIM — Registro Spese</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg0:#1e2535; --bg1:#28354d; --bg2:#32405a; --bg3:#3d4d6a;
+  --border:rgba(255,255,255,0.13); --border2:rgba(255,255,255,0.24);
+  --text:#eaf0fa; --text2:#b8cce4; --text3:#7a96c0;
+  --teal:#00c4a0; --teal-glow:rgba(0,196,160,0.11);
+  --blue:#4a9de0; --blue-glow:rgba(74,157,224,0.11);
+  --amber:#e09430; --amber-glow:rgba(224,148,48,0.11);
+  --red:#e05050; --green:#2ab868;
+  --r-sm:8px; --r-md:12px; --r-lg:16px;
+  --shadow:0 2px 8px rgba(0,0,0,0.22), 0 0 0 0.5px rgba(0,0,0,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;min-height:100vh;padding:2rem 1rem 4rem}
+.app{max-width:700px;margin:0 auto}
+
+.header{margin-bottom:2rem}
+.brand{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--teal);background:var(--teal-glow);border:.5px solid rgba(0,196,160,.28);padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:.8rem}
+h1{font-size:22px;font-weight:600;letter-spacing:-.3px;color:var(--text)}
+h1 span{color:var(--teal)}
+.sub{font-size:12px;color:var(--text2);margin-top:4px;font-family:'IBM Plex Mono',monospace}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:2rem}
+.card{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-md);padding:1rem;box-shadow:var(--shadow)}
+.card-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--text3);margin-bottom:6px;text-transform:uppercase}
+.card-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600}
+.card-val.teal{color:var(--teal)}
+.card-val.amber{color:var(--amber)}
+.card-val.blue{color:var(--blue)}
+.card-sub{font-size:11px;color:var(--text2);margin-top:3px}
+
+.section{margin-bottom:1.5rem}
+.sec-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:.5px solid var(--border)}
+
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;padding:.5rem .75rem;text-align:left;border-bottom:.5px solid var(--border)}
+.tbl th:last-child{text-align:right}
+.tbl td{padding:.75rem;border-bottom:.5px solid var(--border);vertical-align:middle;color:var(--text2)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl td:last-child{text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:500}
+.tbl tr:hover td{background:rgba(255,255,255,.025)}
+
+.badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge.once{background:rgba(74,157,224,.14);color:var(--blue);border:.5px solid rgba(74,157,224,.28)}
+.badge.monthly{background:rgba(0,196,160,.14);color:var(--teal);border:.5px solid rgba(0,196,160,.28)}
+.badge.credit{background:rgba(224,148,48,.14);color:var(--amber);border:.5px solid rgba(224,148,48,.28)}
+
+.cat-icon{font-size:15px;margin-right:8px}
+.row-name{font-weight:500;font-size:13px;color:var(--text)}
+.row-note{font-size:11px;color:var(--text2);margin-top:2px}
+
+.monthly-box{background:var(--bg1);border:.5px solid var(--border2);border-radius:var(--r-md);padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:center;margin-top:1rem;box-shadow:var(--shadow)}
+.monthly-lbl{font-size:12px;color:var(--text2)}
+.monthly-lbl strong{display:block;font-size:13px;color:var(--text);font-weight:500}
+.monthly-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--amber)}
+
+.add-box{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;margin-top:1.5rem;box-shadow:var(--shadow)}
+.add-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:1rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-grid.full{grid-template-columns:1fr}
+.field label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px}
+.field input,.field select{width:100%;background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r-sm);padding:.55rem .75rem;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus{border-color:rgba(0,196,160,.45)}
+.field select option{background:var(--bg2)}
+.btn-add{width:100%;margin-top:12px;background:var(--teal);color:#1e2535;border:none;border-radius:var(--r-sm);padding:.65rem;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:opacity .2s}
+.btn-add:hover{opacity:.85}
+.btn-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:4px;transition:color .2s}
+.btn-del:hover{color:var(--red)}
+
+.footer{margin-top:2rem;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);text-align:center}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="brand">WELDAIM · REGISTRO SPESE</div>
+    <h1>Budget &amp; <span>Investimenti</span></h1>
+    <div class="sub" id="update-date">Aggiornato: —</div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-lbl">Spesa una tantum</div>
+      <div class="card-val teal" id="sum-once">—</div>
+      <div class="card-sub">Hardware + setup</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Costo mensile</div>
+      <div class="card-val amber" id="sum-monthly">—</div>
+      <div class="card-sub">Abbonamenti ricorrenti</div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">Crediti API</div>
+      <div class="card-val blue" id="sum-credits">—</div>
+      <div class="card-sub">Console Anthropic</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">Dettaglio spese</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Voce</th>
+          <th>Tipo</th>
+          <th>Data</th>
+          <th>Importo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="expense-tbody"></tbody>
+    </table>
+    <div class="monthly-box">
+      <div class="monthly-lbl">
+        <strong>Costo mensile totale</strong>
+        Abbonamenti attivi ricorrenti
+      </div>
+      <div class="monthly-val" id="monthly-total">—</div>
+    </div>
+  </div>
+
+  <div class="add-box">
+    <div class="add-title">+ Aggiungi spesa</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Voce</label>
+        <input type="text" id="in-name" placeholder="es. Railway Pro">
+      </div>
+      <div class="field">
+        <label>Importo (€)</label>
+        <input type="number" id="in-amount" placeholder="0.00" step="0.01">
+      </div>
+      <div class="field">
+        <label>Tipo</label>
+        <select id="in-type">
+          <option value="once">Una tantum</option>
+          <option value="monthly">Mensile</option>
+          <option value="credit">Crediti API</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Data</label>
+        <input type="date" id="in-date">
+      </div>
+    </div>
+    <div class="form-grid full">
+      <div class="field">
+        <label>Note (opzionale)</label>
+        <input type="text" id="in-note" placeholder="es. Piano annuale, sconto 20%">
+      </div>
+    </div>
+    <button class="btn-add" onclick="addExpense()">AGGIUNGI SPESA</button>
+  </div>
+
+  <div class="footer">I dati vengono salvati nel browser · WeldAIM © 2026</div>
+</div>
+
+<script>
+const STORE='weldaim_spese_v3';
+
+const DEFAULTS=[
+  {id:'s1',name:'PC Personale',amount:435,type:'once',date:'2026-04-01',note:'Hardware sviluppo WeldAIM'},
+  {id:'s2',name:'Claude.ai Pro',amount:22,type:'monthly',date:'2026-04-01',note:'Abbonamento mensile'},
+  {id:'s3',name:'Crediti API Console Anthropic',amount:22,type:'credit',date:'2026-04-19',note:'Prima ricarica crediti API'},
+];
+
+function load(){try{return JSON.parse(localStorage.getItem(STORE))||null;}catch{return null;}}
+function save(data){localStorage.setItem(STORE,JSON.stringify(data));}
+
+function init(){
+  let data=load();
+  if(!data){data=DEFAULTS;save(data);}
+  render(data);
+  document.getElementById('in-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('update-date').textContent='Aggiornato: '+new Date().toLocaleDateString('it-IT',{day:'2-digit',month:'long',year:'numeric'});
+}
+
+function render(data){
+  const tbody=document.getElementById('expense-tbody');
+  tbody.innerHTML='';
+  let sumOnce=0,sumMonthly=0,sumCredits=0;
+  data.forEach(e=>{
+    const tr=document.createElement('tr');
+    const typeLabel=e.type==='once'?'Una tantum':e.type==='monthly'?'Mensile':'Crediti API';
+    const typeCls=e.type==='once'?'once':e.type==='monthly'?'monthly':'credit';
+    const icon=e.type==='once'?'🖥️':e.type==='monthly'?'🔄':'⚡';
+    const dateStr=e.date?new Date(e.date).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'}):'—';
+    tr.innerHTML=`
+      <td>
+        <span class="cat-icon">${icon}</span>
+        <div style="display:inline-block;vertical-align:middle">
+          <div class="row-name">${e.name}</div>
+          ${e.note?`<div class="row-note">${e.note}</div>`:''}
+        </div>
+      </td>
+      <td><span class="badge ${typeCls}">${typeLabel}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px">${dateStr}</td>
+      <td style="color:${e.type==='once'?'var(--blue)':e.type==='monthly'?'var(--teal)':'var(--amber)'}">€ ${Number(e.amount).toFixed(2)}</td>
+      <td><button class="btn-del" onclick="delExpense('${e.id}')">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+    if(e.type==='once')sumOnce+=Number(e.amount);
+    else if(e.type==='monthly')sumMonthly+=Number(e.amount);
+    else sumCredits+=Number(e.amount);
+  });
+  document.getElementById('sum-once').textContent='€ '+sumOnce.toFixed(2);
+  document.getElementById('sum-monthly').textContent='€ '+sumMonthly.toFixed(2)+'/mo';
+  document.getElementById('sum-credits').textContent='€ '+sumCredits.toFixed(2);
+  document.getElementById('monthly-total').textContent='€ '+sumMonthly.toFixed(2)+' /mese';
+}
+
+function addExpense(){
+  const name=document.getElementById('in-name').value.trim();
+  const amount=parseFloat(document.getElementById('in-amount').value);
+  const type=document.getElementById('in-type').value;
+  const date=document.getElementById('in-date').value;
+  const note=document.getElementById('in-note').value.trim();
+  if(!name||isNaN(amount)||amount<=0){alert('Inserisci nome e importo valido.');return;}
+  const data=load()||[];
+  data.push({id:'s'+Date.now(),name,amount,type,date,note});
+  save(data);render(data);
+  document.getElementById('in-name').value='';
+  document.getElementById('in-amount').value='';
+  document.getElementById('in-note').value='';
+}
+
+function delExpense(id){
+  if(!confirm('Eliminare questa voce?'))return;
+  const data=(load()||[]).filter(e=>e.id!==id);
+  save(data);render(data);
+}
+
+init();
+</script>
+</body>
+</html>
