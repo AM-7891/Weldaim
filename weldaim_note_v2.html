@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeldAIM — Note di Progetto</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+:root {
+  --bg0:#1e2535; --bg1:#28354d; --bg2:#32405a; --bg3:#3d4d6a;
+  --border:rgba(255,255,255,0.13); --border2:rgba(255,255,255,0.24);
+  --text:#eaf0fa; --text2:#b8cce4; --text3:#7a96c0;
+  --teal:#00c4a0; --teal-glow:rgba(0,196,160,0.11);
+  --blue:#4a9de0; --blue-glow:rgba(74,157,224,0.11);
+  --amber:#e09430; --amber-glow:rgba(224,148,48,0.11);
+  --purple:#9060c8; --purple-glow:rgba(144,96,200,0.11);
+  --red:#e05050; --red-glow:rgba(224,80,80,0.11);
+  --green:#2ab868;
+  --gray-glow:rgba(184,204,228,0.07);
+  --r-sm:6px; --r-md:12px; --r-lg:16px;
+  --shadow:0 2px 8px rgba(0,0,0,0.22), 0 0 0 0.5px rgba(0,0,0,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;min-height:100vh;padding:2rem 1rem 4rem}
+.wrap{max-width:780px;margin:0 auto}
+
+.header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem;padding-bottom:1rem;border-bottom:.5px solid var(--border)}
+.logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--teal)}
+.logo span{color:var(--text3);font-weight:400}
+.count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2)}
+
+/* Banner stato */
+.status-bar{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:6px 12px;border-radius:20px;margin-bottom:1.25rem;border:.5px solid;width:fit-content;transition:all .3s}
+.status-bar.loading{color:var(--text3);background:rgba(255,255,255,.04);border-color:var(--border)}
+.status-bar.ok{color:var(--green);background:rgba(42,184,104,.08);border-color:rgba(42,184,104,.28)}
+.status-bar.error{color:var(--red);background:rgba(224,80,80,.08);border-color:rgba(224,80,80,.28)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+.tag-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
+.tag-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;padding:4px 12px;border-radius:20px;border:.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;text-transform:uppercase}
+.tag-btn:hover{border-color:var(--teal);color:var(--teal)}
+.tag-btn.active{background:var(--teal-glow);color:var(--teal);border-color:rgba(0,196,160,.38)}
+
+.input-box{background:var(--bg1);border:.5px solid var(--border2);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:1.5rem;box-shadow:var(--shadow)}
+.input-row{display:flex;gap:8px;margin-bottom:10px}
+.input-row input{flex:1;background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r-sm);padding:8px 12px;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;outline:none;transition:border-color .15s}
+.input-row input:focus{border-color:var(--teal)}
+.input-row input::placeholder{color:var(--text3)}
+select{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r-sm);padding:8px 10px;color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;cursor:pointer}
+select option{background:var(--bg2)}
+textarea{width:100%;background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r-sm);padding:10px 12px;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:80px;outline:none;transition:border-color .15s;margin-bottom:10px}
+textarea:focus{border-color:var(--teal)}
+textarea::placeholder{color:var(--text3)}
+
+.btn-add{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;padding:8px 20px;border-radius:var(--r-sm);border:.5px solid var(--teal);background:var(--teal-glow);color:var(--teal);cursor:pointer;transition:all .15s;text-transform:uppercase}
+.btn-add:hover{background:var(--teal);color:#1e2535}
+.btn-add:disabled{opacity:.4;cursor:not-allowed}
+
+.notes-list{display:flex;flex-direction:column;gap:8px}
+.note-card{background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-md);padding:1rem 1.125rem;transition:border-color .15s;box-shadow:var(--shadow)}
+.note-card:hover{border-color:var(--border2)}
+.note-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.note-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px}
+.note-body{font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-wrap}
+.note-meta{display:flex;align-items:center;gap:8px;margin-top:10px}
+.note-tag{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:10px}
+.note-date{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3)}
+.btn-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;line-height:1;transition:color .15s;flex-shrink:0}
+.btn-del:hover{color:var(--red)}
+.btn-edit{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:4px;line-height:1;transition:color .15s;flex-shrink:0}
+.btn-edit:hover{color:var(--teal)}
+
+/* Pannello modifica inline */
+.edit-panel{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);display:none;flex-direction:column;gap:8px}
+.edit-panel.open{display:flex}
+.edit-panel input{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r-sm);padding:7px 10px;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;outline:none;transition:border-color .15s;width:100%}
+.edit-panel input:focus{border-color:rgba(0,196,160,.45)}
+.edit-panel textarea{width:100%;background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r-sm);padding:9px 10px;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.6;resize:vertical;min-height:70px;outline:none;transition:border-color .15s;margin-bottom:0}
+.edit-panel textarea:focus{border-color:rgba(0,196,160,.45)}
+.edit-panel select{width:100%;background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--r-sm);padding:7px 10px;color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;cursor:pointer}
+.edit-actions{display:flex;gap:8px}
+.btn-save{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.06em;padding:7px 18px;border-radius:var(--r-sm);border:.5px solid var(--teal);background:var(--teal);color:#1e2535;cursor:pointer;transition:opacity .15s;text-transform:uppercase}
+.btn-save:hover{opacity:.85}
+.btn-save:disabled{opacity:.4;cursor:not-allowed}
+.btn-cancel{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;padding:7px 14px;border-radius:var(--r-sm);border:.5px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;text-transform:uppercase}
+.btn-cancel:hover{color:var(--text2);border-color:var(--text2)}
+
+.t-idea{background:var(--purple-glow);color:var(--purple)}
+.t-feature{background:var(--blue-glow);color:var(--blue)}
+.t-arch{background:var(--teal-glow);color:var(--teal)}
+.t-comm{background:var(--amber-glow);color:var(--amber)}
+.t-bug{background:var(--red-glow);color:var(--red)}
+.t-altro{background:var(--gray-glow);color:var(--text2)}
+
+.note-card[data-tag="Idea"]         {border-left:2.5px solid var(--purple)}
+.note-card[data-tag="Feature"]      {border-left:2.5px solid var(--blue)}
+.note-card[data-tag="Architettura"] {border-left:2.5px solid var(--teal)}
+.note-card[data-tag="Commerciale"]  {border-left:2.5px solid var(--amber)}
+.note-card[data-tag="Bug/Fix"]      {border-left:2.5px solid var(--red)}
+.note-card[data-tag="Altro"]        {border-left:2.5px solid var(--text3)}
+
+.empty{text-align:center;padding:3rem 0;color:var(--text3);font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:8px;display:block}
+.spinner{display:inline-block;width:10px;height:10px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--teal);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.footer{margin-top:2.5rem;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.06em;padding-top:1rem;border-top:.5px solid var(--border)}
+.btn-export{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;padding:4px 12px;border-radius:var(--r-sm);border:.5px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;text-transform:uppercase}
+.btn-export:hover{color:var(--text2);border-color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div>
+      <div class="logo">WeldAIM <span>// Note di Progetto</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-export" onclick="exportJSON()">↓ Export</button>
+      <span class="count" id="cnt">— note</span>
+    </div>
+  </div>
+
+  <div class="status-bar loading" id="status-bar">
+    <span class="status-dot"></span>
+    <span id="status-text">Connessione a Google Sheets...</span>
+  </div>
+
+  <div class="tag-bar">
+    <button class="tag-btn active" onclick="filterTag('all',this)">Tutte</button>
+    <button class="tag-btn" onclick="filterTag('Idea',this)">Idea</button>
+    <button class="tag-btn" onclick="filterTag('Feature',this)">Feature</button>
+    <button class="tag-btn" onclick="filterTag('Architettura',this)">Architettura</button>
+    <button class="tag-btn" onclick="filterTag('Commerciale',this)">Commerciale</button>
+    <button class="tag-btn" onclick="filterTag('Bug/Fix',this)">Bug/Fix</button>
+    <button class="tag-btn" onclick="filterTag('Altro',this)">Altro</button>
+  </div>
+
+  <div class="input-box">
+    <div class="input-row">
+      <input type="text" id="inp-title" placeholder="Titolo (opzionale)" />
+      <select id="inp-tag">
+        <option value="Idea">Idea</option>
+        <option value="Feature">Feature</option>
+        <option value="Architettura">Architettura</option>
+        <option value="Commerciale">Commerciale</option>
+        <option value="Bug/Fix">Bug/Fix</option>
+        <option value="Altro">Altro</option>
+      </select>
+    </div>
+    <textarea id="inp-body" placeholder="Scrivi la nota... (Ctrl+Enter per aggiungere)"></textarea>
+    <button class="btn-add" id="btn-add" onclick="addNote()">+ Aggiungi</button>
+  </div>
+
+  <div class="notes-list" id="list">
+    <div class="empty"><span class="spinner"></span> Caricamento...</div>
+  </div>
+
+  <div class="footer">Dati sincronizzati su Google Sheets · WeldAIM © 2026</div>
+</div>
+
+<script>
+// ─── CONFIGURAZIONE ───────────────────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby3RpRGV6XqyfzRtFRmbu9s4TLolD_C-Tkq_7QAq4BBEJLNDx3QFjuGYRfWiuT_qBkogw/exec';
+
+const TAG_CLASS = {'Idea':'t-idea','Feature':'t-feature','Architettura':'t-arch','Commerciale':'t-comm','Bug/Fix':'t-bug','Altro':'t-altro'};
+
+// Note precaricate — scritte sul Sheet solo al primo avvio (foglio vuoto)
+const PRELOADED = [
+  {id:1746957600004,title:'Agente AI lettura disegni tecnici',body:'Agente AI per offerte/Riesame tecnico: implementare un Agente AI capace di leggere i disegni tecnici meccanici con saldatura.',tag:'Architettura',date:'11/05/26',time:''},
+  {id:1746957600003,title:'Mock-up: raccolta esempi',body:'Chiedere di recuperare le correzioni di Mock-up con errori di compilazione e con macrografie errate (le prime di Forghieri). Chiedere di recuperare mock-up corretti.',tag:'Altro',date:'11/05/26',time:''},
+  {id:1746957600002,title:'WPS/WPQR/WQ: raccolta esempi',body:'Chiedere a Giulio esempi di documenti corretti e documenti strani/anomali.',tag:'Altro',date:'11/05/26',time:''},
+  {id:1746957600001,title:'Certificati 3.1: esempi giusti e sbagliati',body:'Giulio: raccogliere esempi di certificati 3.1 corretti e sbagliati, inclusi quelli in cinese, con e senza DoP e marcatura CE.',tag:'Altro',date:'11/05/26',time:''}
+];
+
+// ─── STATO ───────────────────────────────────────────────────────────────────
+let notes = [];
+let activeFilter = 'all';
+
+// ─── UI HELPERS ──────────────────────────────────────────────────────────────
+function setStatus(state, text) {
+  const bar = document.getElementById('status-bar');
+  bar.className = 'status-bar ' + state;
+  document.getElementById('status-text').textContent = text;
+}
+
+function setBtnLoading(loading) {
+  const btn = document.getElementById('btn-add');
+  btn.disabled = loading;
+  btn.textContent = loading ? '⏳ Salvataggio...' : '+ Aggiungi';
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── JSONP: LEGGI DAL SHEET ──────────────────────────────────────────────────
+function loadFromSheet() {
+  setStatus('loading', 'Connessione a Google Sheets...');
+  const cbName = 'weldaim_note_cb_' + Date.now();
+  const script = document.createElement('script');
+  script.src = SCRIPT_URL + '?callback=' + cbName;
+
+  const timeout = setTimeout(() => {
+    setStatus('error', 'Timeout — ricarica la pagina');
+    delete window[cbName];
+    script.remove();
+  }, 10000);
+
+  window[cbName] = async function(data) {
+    clearTimeout(timeout);
+    delete window[cbName];
+    script.remove();
+
+    try {
+      if (data.length === 0) {
+        setStatus('loading', 'Primo avvio — carico note iniziali...');
+        for (const item of PRELOADED) {
+          await postToSheet({ action: 'add', ...item });
+        }
+        // Le note precaricate vanno in fondo — le invertiamo per mostrare dalla più recente
+        notes = [...PRELOADED].reverse();
+      } else {
+        notes = data.map(n => ({ ...n, id: Number(n.id) }));
+        notes.reverse(); // mostra più recenti prima
+      }
+      setStatus('ok', 'Google Sheets · sincronizzato');
+      render();
+    } catch (err) {
+      setStatus('error', 'Errore caricamento');
+      console.error('loadFromSheet:', err);
+    }
+  };
+
+  script.onerror = function() {
+    clearTimeout(timeout);
+    delete window[cbName];
+    setStatus('error', 'Errore connessione — ricarica la pagina');
+  };
+
+  document.head.appendChild(script);
+}
+
+// ─── POST: SCRIVI SUL SHEET ───────────────────────────────────────────────────
+async function postToSheet(payload) {
+  await fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+}
+
+// ─── AGGIUNGI NOTA ────────────────────────────────────────────────────────────
+async function addNote() {
+  const title = document.getElementById('inp-title').value.trim();
+  const body  = document.getElementById('inp-body').value.trim();
+  const tag   = document.getElementById('inp-tag').value;
+  if (!body) { document.getElementById('inp-body').focus(); return; }
+
+  const now = new Date();
+  const newNote = {
+    id:    Date.now(),
+    title,
+    body,
+    tag,
+    date:  now.toLocaleDateString('it-IT', {day:'2-digit', month:'2-digit', year:'2-digit'}),
+    time:  now.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'})
+  };
+
+  setBtnLoading(true);
+  try {
+    await postToSheet({ action: 'add', ...newNote });
+    notes.unshift(newNote); // aggiungi in cima alla lista locale
+    render();
+    document.getElementById('inp-title').value = '';
+    document.getElementById('inp-body').value  = '';
+    setStatus('ok', 'Google Sheets · salvato ✓');
+  } catch (err) {
+    setStatus('error', 'Errore salvataggio');
+    console.error('addNote:', err);
+  } finally {
+    setBtnLoading(false);
+  }
+}
+
+// ─── MODIFICA NOTA ───────────────────────────────────────────────────────────
+
+// Apre il pannello di modifica per una nota
+function editNote(id) {
+  // Chiudi eventuali altri pannelli aperti
+  document.querySelectorAll('.edit-panel.open').forEach(p => {
+    const otherId = p.id.replace('edit-panel-', '');
+    if (otherId !== String(id)) cancelEdit(Number(otherId));
+  });
+  document.getElementById('edit-panel-' + id).classList.add('open');
+}
+
+// Chiude il pannello senza salvare
+function cancelEdit(id) {
+  document.getElementById('edit-panel-' + id).classList.remove('open');
+}
+
+// Salva le modifiche — aggiorna in locale e sul Sheet
+async function saveEdit(id) {
+  const newTitle = document.getElementById('edit-title-' + id).value.trim();
+  const newBody  = document.getElementById('edit-body-'  + id).value.trim();
+  const newTag   = document.getElementById('edit-tag-'   + id).value;
+
+  if (!newBody) {
+    document.getElementById('edit-body-' + id).focus();
+    return;
+  }
+
+  // Disabilita il pulsante salva durante il salvataggio
+  const btnSave = document.getElementById('btn-save-' + id);
+  btnSave.disabled = true;
+  btnSave.textContent = '⏳';
+
+  try {
+    // Aggiorna in memoria
+    const note = notes.find(n => n.id === id);
+    if (note) {
+      note.title = newTitle;
+      note.body  = newBody;
+      note.tag   = newTag;
+    }
+
+    // Scrivi sul Sheet (action: update)
+    await postToSheet({ action: 'update', id: String(id), title: newTitle, body: newBody, tag: newTag });
+
+    // Aggiorna la card nella UI senza fare un re-render completo
+    const card = document.getElementById('card-' + id);
+    if (card) {
+      card.dataset.tag = newTag;
+      // Aggiorna il bordo sinistro in base al nuovo tag
+      const tagColors = {Idea:'var(--purple)',Feature:'var(--blue)',Architettura:'var(--teal)',Commerciale:'var(--amber)','Bug/Fix':'var(--red)',Altro:'var(--text3)'};
+      card.style.borderLeftColor = tagColors[newTag] || 'var(--text3)';
+      // Aggiorna testo visualizzato
+      const viewTitle = document.getElementById('view-title-' + id);
+      const viewBody  = document.getElementById('view-body-'  + id);
+      const viewMeta  = document.getElementById('view-meta-'  + id);
+      if (viewTitle) { viewTitle.textContent = newTitle; viewTitle.style.display = newTitle ? '' : 'none'; }
+      if (viewBody)  viewBody.textContent = newBody;
+      if (viewMeta)  viewMeta.querySelector('.note-tag').className = 'note-tag ' + (TAG_CLASS[newTag] || 't-altro');
+      if (viewMeta)  viewMeta.querySelector('.note-tag').textContent = newTag;
+    }
+
+    cancelEdit(id);
+    setStatus('ok', 'Google Sheets · modificato ✓');
+  } catch (err) {
+    setStatus('error', 'Errore salvataggio modifica');
+    console.error('saveEdit:', err);
+  } finally {
+    btnSave.disabled = false;
+    btnSave.textContent = 'Salva';
+  }
+}
+
+// ─── ELIMINA NOTA ─────────────────────────────────────────────────────────────
+async function deleteNote(id) {
+  if (!confirm('Eliminare questa nota?')) return;
+  notes = notes.filter(n => n.id !== id);
+  render();
+  try {
+    await postToSheet({ action: 'delete', id: String(id) });
+    setStatus('ok', 'Google Sheets · eliminato ✓');
+  } catch (err) {
+    setStatus('error', 'Errore eliminazione');
+    await loadFromSheet();
+  }
+}
+
+// ─── FILTRO TAG ───────────────────────────────────────────────────────────────
+function filterTag(tag, btn) {
+  activeFilter = tag;
+  document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  render();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function render() {
+  const filtered = activeFilter === 'all' ? notes : notes.filter(n => n.tag === activeFilter);
+  document.getElementById('cnt').textContent = notes.length + (notes.length === 1 ? ' nota' : ' note');
+  const list = document.getElementById('list');
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty"><span class="empty-icon">📋</span>Nessuna nota${activeFilter !== 'all' ? ' in questa categoria' : ''}</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(n => `
+    <div class="note-card" data-tag="${esc(n.tag)}" id="card-${n.id}">
+      <div class="note-top">
+        <div style="flex:1">
+          ${n.title ? `<div class="note-title" id="view-title-${n.id}">${esc(n.title)}</div>` : `<div class="note-title" id="view-title-${n.id}" style="display:none"></div>`}
+          <div class="note-body" id="view-body-${n.id}">${esc(n.body)}</div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          <button class="btn-edit" onclick="editNote(${n.id})" title="Modifica">✏️</button>
+          <button class="btn-del"  onclick="deleteNote(${n.id})" title="Elimina">✕</button>
+        </div>
+      </div>
+      <div class="note-meta" id="view-meta-${n.id}">
+        <span class="note-tag ${TAG_CLASS[n.tag] || 't-altro'}">${esc(n.tag)}</span>
+        <span class="note-date">${n.date}${n.time ? ' · ' + n.time : ''}</span>
+      </div>
+      <!-- Pannello modifica — nascosto di default -->
+      <div class="edit-panel" id="edit-panel-${n.id}">
+        <input  type="text" id="edit-title-${n.id}" value="${esc(n.title)}" placeholder="Titolo (opzionale)" />
+        <textarea id="edit-body-${n.id}">${esc(n.body)}</textarea>
+        <select id="edit-tag-${n.id}">
+          ${['Idea','Feature','Architettura','Commerciale','Bug/Fix','Altro'].map(t =>
+            `<option value="${t}"${t === n.tag ? ' selected' : ''}>${t}</option>`
+          ).join('')}
+        </select>
+        <div class="edit-actions">
+          <button class="btn-save" id="btn-save-${n.id}" onclick="saveEdit(${n.id})">Salva</button>
+          <button class="btn-cancel" onclick="cancelEdit(${n.id})">Annulla</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── EXPORT JSON ──────────────────────────────────────────────────────────────
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(notes, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'weldaim_note_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') addNote(); });
+loadFromSheet();
+</script>
+</body>
+</html>
