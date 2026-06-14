@@ -2,152 +2,117 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="WeldAIM">
 <meta name="theme-color" content="#1e2535">
-<title>WeldAIM — Portale Operativo</title>
+<title>WeldAIM — Hub</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 :root {
-  --bg0:#1e2535; --bg1:#28354d; --bg2:#32405a; --bg3:#3d4d6a;
+  --bg0:#1e2535; --bg1:#28354d; --bg2:#32405a;
   --border:rgba(255,255,255,0.13); --border2:rgba(255,255,255,0.24);
   --text:#eaf0fa; --text2:#b8cce4; --text3:#7a96c0;
   --teal:#00c4a0; --teal-glow:rgba(0,196,160,0.11);
   --blue:#4a9de0; --blue-glow:rgba(74,157,224,0.11);
   --amber:#e09430; --amber-glow:rgba(224,148,48,0.11);
-  --pink:#e04878; --pink-glow:rgba(224,72,120,0.11);
-  --green:#2ab868;
-  --r-md:12px; --r-lg:16px;
-  --shadow:0 2px 8px rgba(0,0,0,0.22), 0 0 0 0.5px rgba(0,0,0,0.12);
+  --purple:#9060c8; --purple-glow:rgba(144,96,200,0.11);
+  --r-md:12px; --r-lg:18px;
+  --shadow:0 2px 12px rgba(0,0,0,0.28), 0 0 0 0.5px rgba(0,0,0,0.12);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:15px;line-height:1.6}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg0)}
-::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:2px}
-
-.app{max-width:560px;margin:0 auto;padding:2.5rem 1rem 5rem}
-
-/* HEADER */
-.header{margin-bottom:2.5rem;text-align:center}
-.brand-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:.75rem}
-.brand-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.12em;color:var(--teal);background:var(--teal-glow);border:.5px solid rgba(0,196,160,.28);padding:3px 10px;border-radius:20px}
-.header h1{font-size:28px;font-weight:600;letter-spacing:-.5px;color:var(--text)}
-.header h1 em{color:var(--teal);font-style:normal}
-.header-sub{font-size:13px;color:var(--text3);margin-top:6px;font-weight:300;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
-
-/* DIVIDER */
-.divider{height:.5px;background:var(--border);margin:0 0 2rem}
-
-/* STRUMENTI */
-.section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:1rem}
-
-.tool-card{
-  display:flex;
-  align-items:center;
-  gap:1rem;
-  background:var(--bg1);
-  border:.5px solid var(--border);
-  border-radius:var(--r-lg);
-  padding:1.1rem 1.25rem;
-  margin-bottom:.75rem;
-  text-decoration:none;
-  box-shadow:var(--shadow);
-  transition:background .15s, border-color .15s, transform .12s;
-  cursor:pointer;
-}
-.tool-card:hover{
-  background:var(--bg2);
-  transform:translateY(-1px);
-}
-.tool-card:active{transform:translateY(0)}
-
-/* accenti colore per ogni card */
-.tool-card.gantt  {border-left:2.5px solid var(--teal)}
-.tool-card.spese  {border-left:2.5px solid var(--amber)}
-.tool-card.note   {border-left:2.5px solid var(--blue)}
-
-.tool-icon{
-  width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;flex-shrink:0;
-}
-.gantt  .tool-icon{background:var(--teal-glow)}
-.spese  .tool-icon{background:var(--amber-glow)}
-.note   .tool-icon{background:var(--blue-glow)}
-
-.tool-info{flex:1;min-width:0}
-.tool-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:2px}
-.tool-desc{font-size:12px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
-
-.tool-arrow{font-size:16px;color:var(--text3);flex-shrink:0}
-
-/* FOOTER */
-.footer{margin-top:3rem;text-align:center}
-.footer-text{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text3)}
-.footer-text span{color:var(--teal)}
-
-/* Animazione entry */
-@keyframes fadeUp {
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.header{animation:fadeUp .4s ease both}
-.tool-card:nth-child(1){animation:fadeUp .4s .1s ease both}
-.tool-card:nth-child(2){animation:fadeUp .4s .18s ease both}
-.tool-card:nth-child(3){animation:fadeUp .4s .26s ease both}
-.footer{animation:fadeUp .4s .35s ease both}
+html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;min-height:100vh}
+ 
+.wrap{width:100%;max-width:420px}
+ 
+/* Header */
+.header{text-align:center;margin-bottom:2.5rem}
+.brand{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--teal);background:var(--teal-glow);border:.5px solid rgba(0,196,160,.28);padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:1rem}
+.title{font-size:28px;font-weight:600;letter-spacing:-.5px;color:var(--text);margin-bottom:.4rem}
+.title span{color:var(--teal)}
+.subtitle{font-size:13px;color:var(--text3);font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+ 
+/* Cards */
+.cards{display:flex;flex-direction:column;gap:12px;margin-bottom:2rem}
+ 
+.card{display:flex;align-items:center;gap:1rem;background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1.125rem 1.25rem;text-decoration:none;color:inherit;transition:all .18s;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .18s}
+.card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,0.32)}
+.card:hover::before{opacity:1}
+.card:active{transform:translateY(0)}
+ 
+.card.gantt{border-left:2.5px solid var(--teal)}
+.card.gantt::before{background:var(--teal-glow)}
+.card.spese{border-left:2.5px solid var(--amber)}
+.card.spese::before{background:var(--amber-glow)}
+.card.note{border-left:2.5px solid var(--purple)}
+.card.note::before{background:var(--purple-glow)}
+ 
+.card-icon{font-size:22px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border-radius:10px;border:.5px solid var(--border)}
+.card-body{flex:1;min-width:0}
+.card-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:3px}
+.card-desc{font-size:12px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
+.card-arrow{color:var(--text3);font-size:16px;flex-shrink:0;transition:transform .18s}
+.card:hover .card-arrow{transform:translateX(3px);color:var(--text2)}
+ 
+/* Sync badge */
+.sync-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;padding:2px 7px;border-radius:10px;background:rgba(42,184,104,.1);color:#2ab868;border:.5px solid rgba(42,184,104,.25);margin-top:4px;display:inline-block}
+ 
+/* Footer */
+.footer{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.06em}
+.footer a{color:var(--text3);text-decoration:none}
+.footer a:hover{color:var(--teal)}
 </style>
 </head>
 <body>
-<div class="app">
-
+<div class="wrap">
+ 
   <div class="header">
-    <div class="brand-row">
-      <span class="brand-badge">WELDAIM · v0.1</span>
-    </div>
-    <h1>Weld<em>AIM</em></h1>
-    <div class="header-sub">Portale strumenti operativi</div>
+    <div class="brand">WELDAIM.AI</div>
+    <div class="title">Weld<span>AIM</span></div>
+    <div class="subtitle">Modulo 1 — Welding Book Agent</div>
   </div>
-
-  <div class="divider"></div>
-
-  <div class="section-label">Strumenti</div>
-
-  <a class="tool-card gantt" href="gantt_weldaim_v3.html">
-    <div class="tool-icon">📊</div>
-    <div class="tool-info">
-      <div class="tool-name">Piano Operativo</div>
-      <div class="tool-desc">Gantt · Sprint · Progressi</div>
-    </div>
-    <div class="tool-arrow">›</div>
-  </a>
-
-  <a class="tool-card spese" href="weldaim_spese_v3.html">
-    <div class="tool-icon">💶</div>
-    <div class="tool-info">
-      <div class="tool-name">Spese &amp; Budget</div>
-      <div class="tool-desc">Costi · Categorie · Saldo</div>
-    </div>
-    <div class="tool-arrow">›</div>
-  </a>
-
-  <a class="tool-card note" href="weldaim_note_v1.html">
-    <div class="tool-icon">📝</div>
-    <div class="tool-info">
-      <div class="tool-name">Note di Progetto</div>
-      <div class="tool-desc">Idee · Feature · Architettura</div>
-    </div>
-    <div class="tool-arrow">›</div>
-  </a>
-
+ 
+  <div class="cards">
+ 
+    <a class="card gantt" href="gantt_weldaim_v4.html">
+      <div class="card-icon">📋</div>
+      <div class="card-body">
+        <div class="card-title">Piano Operativo</div>
+        <div class="card-desc">Gantt · Sprint · Progressi</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+    <a class="card spese" href="weldaim_spese_v4.html">
+      <div class="card-icon">💶</div>
+      <div class="card-body">
+        <div class="card-title">Budget & Investimenti</div>
+        <div class="card-desc">Spese · Abbonamenti · API</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+    <a class="card note" href="weldaim_note_v2.html">
+      <div class="card-icon">💡</div>
+      <div class="card-body">
+        <div class="card-title">Note di Progetto</div>
+        <div class="card-desc">Idee · Feature · Architettura</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+  </div>
+ 
   <div class="footer">
-    <div class="footer-text">
-      Angelo Mastanduno · IWE · <span>weldaim.ai</span>
-    </div>
+    weldaim.ai &nbsp;·&nbsp; Dati sincronizzati su Google Sheets<br><br>
+    <a href="https://weldaim.ai" target="_blank">weldaim.ai</a>
   </div>
-
+ 
 </div>
 </body>
 </html>
