@@ -596,7 +596,7 @@ function postCheckToSheet(id,checked){
     method:'POST',
     mode:'no-cors',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({id,checked})
+    body:JSON.stringify({action:'update',id,checked})
   }).catch(()=>{}); // fallimento silenzioso — lo stato locale è già aggiornato
 }
 
@@ -704,9 +704,15 @@ function resetAll(){
     const tl=document.getElementById('tl-'+t.id);
     if(cb)cb.checked=false;
     if(tl)tl.classList.remove('done');
-    postCheckToSheet(t.id,false);
   })));
   updateProg();
+  // Un solo POST con action reset invece di uno per ogni task
+  fetch(GANTT_SCRIPT_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'reset'})
+  }).catch(()=>{});
 }
 
 let deferredPrompt=null;
