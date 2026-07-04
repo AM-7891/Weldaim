@@ -56,6 +56,8 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .card.spese::before{background:var(--amber-glow)}
 .card.note{border-left:2.5px solid var(--purple)}
 .card.note::before{background:var(--purple-glow)}
+.card.roadmap{border-left:2.5px solid var(--blue)}
+.card.roadmap::before{background:var(--blue-glow)}
  
 .card-icon{font-size:22px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border-radius:10px;border:.5px solid var(--border)}
 .card-body{flex:1;min-width:0}
@@ -109,6 +111,16 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
       <div class="card-body">
         <div class="card-title">Note di Progetto</div>
         <div class="card-desc">Idee · Feature · Architettura</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+    <a class="card roadmap" href="weldaim_roadmap_v2.html">
+      <div class="card-icon">🗺️</div>
+      <div class="card-body">
+        <div class="card-title">Roadmap Post-Demo</div>
+        <div class="card-desc">Backlog · Priorità · Milestone</div>
         <div class="sync-badge">☁ Google Sheets</div>
       </div>
       <div class="card-arrow">›</div>
