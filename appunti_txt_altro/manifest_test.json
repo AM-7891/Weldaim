@@ -1,0 +1,100 @@
+{
+  "id_welding_book": "20260725_0001",
+  "fornitore": "Abbati",
+  "commessa": "DB",
+  "note_generali": "Dataset di test coerente. Un solo blocco completo (WPS DB-22-25) copre tutta la catena WPS-WPQR-Mockup-CertMateriale-WQ. Gli altri 3 WPS sono coppie isolate WPS-WPQR senza mock-up associato in questo dataset (nessun mock-up disponibile che li citi).",
+  "blocchi": [
+    {
+      "blocco_id": "B1_DB-22-25",
+      "completo": true,
+      "wps": {
+        "file": "01_WPS/WPS DB-22-25_Rev00.pdf",
+        "numero_wps": "DB-22-25",
+        "processo_iso4063": "135",
+        "giunto": "BW / BW parziale penetrazione",
+        "posizione_iso6947": "PA"
+      },
+      "wpqr": {
+        "file": "02_WPQR/WPQR 01-16.pdf",
+        "numero_wpqr_reale": "16VE00108PO1/A",
+        "nota": "Il numero WPQR reale (dentro il documento) NON coincide col nome del file su disco. Vedi nota roadmap 'Naming file vs contenuto'."
+      },
+      "mockup": [
+        {
+          "file": "07_MOCKUP/2025-08_signed.pdf",
+          "wps_citato": "DB-22-25"
+        },
+        {
+          "file": "07_MOCKUP/2025-09_signed.pdf",
+          "wps_citato": "DB-22-25"
+        }
+      ],
+      "materiale": {
+        "norma": "EN 10025-2",
+        "grado": "S355J2+N",
+        "spessori_mm": [12, 15],
+        "certificati": [
+          "08_CERT_MATERIALE_BASE_TIPO 3.1/12mm sp.pdf",
+          "08_CERT_MATERIALE_BASE_TIPO 3.1/15mm sp.pdf"
+        ]
+      },
+      "wq": {
+        "saldatori_richiesti_da_mockup": 2,
+        "saldatori_presenti_in_dataset": 1,
+        "file": ["03_WQ/WEL-24-0941-C059-6364.pdf"],
+        "processo_iso4063": "135",
+        "range_dichiarato": "BW, spessori >3mm",
+        "coerenza_con_wps": "Compatibile (processo, giunto, spessore coerenti)",
+        "GAP_ATTESO": "Copertura saldatori incompleta: mock-up richiede almeno 2 saldatori qualificati (requisito normativo/contrattuale), ma nel dataset e' presente un solo patentino WQ. Atteso: Supervisor deve segnalare STOP bloccante su questo punto quando i check #1/#3/#4/#5 saranno implementati. File WEL-24-0941-C059-6368 escluso da questo blocco (verificare se secondo saldatore o altro processo)."
+      }
+    },
+    {
+      "blocco_id": "B2_DB-23-25",
+      "completo": false,
+      "wps": {
+        "file": "01_WPS/WPS DB-23-25_Rev00.pdf",
+        "numero_wps": "DB-23-25"
+      },
+      "wpqr": {
+        "file": "02_WPQR/WPQR 10-19.pdf",
+        "numero_wpqr_reale": "10-19-L19-11476-017"
+      },
+      "mockup": [],
+      "materiale": null,
+      "wq": null,
+      "nota": "Nessun mock-up, materiale o WQ associato in questo dataset. Utile solo per Agente 1 e Supervisor check #2 (range WPQR vs WPS)."
+    },
+    {
+      "blocco_id": "B3_DB-24-25",
+      "completo": false,
+      "wps": {
+        "file": "01_WPS/WPS DB-24-25_Rev00.pdf",
+        "numero_wps": "DB-24-25"
+      },
+      "wpqr": {
+        "file": "02_WPQR/WPQR 01-22.pdf",
+        "numero_wpqr_reale": "PROSAL-5169-2022 Rev.1"
+      },
+      "mockup": [],
+      "materiale": null,
+      "wq": null,
+      "nota": "Nessun mock-up, materiale o WQ associato in questo dataset. Utile solo per Agente 1 e Supervisor check #2 (range WPQR vs WPS)."
+    },
+    {
+      "blocco_id": "B4_DB-25-25",
+      "completo": false,
+      "wps": {
+        "file": "01_WPS/WPS DB-25-25_Rev00.pdf",
+        "numero_wps": "DB-25-25"
+      },
+      "wpqr": {
+        "file": "02_WPQR/WPQR 02-16.pdf",
+        "numero_wpqr_reale": "16VE00108PO2/A"
+      },
+      "mockup": [],
+      "materiale": null,
+      "wq": null,
+      "nota": "Nessun mock-up, materiale o WQ associato in questo dataset. Utile solo per Agente 1 e Supervisor check #2 (range WPQR vs WPS)."
+    }
+  ]
+}

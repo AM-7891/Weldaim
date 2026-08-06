@@ -1,0 +1,398 @@
+CORREZIONI DOMINIO — WeldAIM
+=============================
+
+#001 | 2026-04-19
+Norma: EN ISO 5817 + EN 15085
+Errore AI: "Livello B è il minimo per CL1"
+Corretto: Livello B è il PIÙ SEVERO (non il minimo).
+          CL1 può avere anche livello C come accettabilità.
+Fonte: esperienza campo + EN 15085-3
+
+#002 | 2026-04-19
+Norma: EN ISO 15609 + EN ISO 15614
+Errore AI: "WPS qualificate secondo ISO 15614"
+Corretto: Le WPS sono REDATTE secondo ISO 15609.
+          Le WPQR sono i documenti di qualifica delle procedure,
+          redatti secondo ISO 15614.
+          La WPS è coperta dalla WPQR, non qualificata essa stessa.
+Fonte: esperienza campo
+
+#003 | 2026-04-19
+Norma: EN 15085 + linea guida mock-up QT.6495.023
+Errore AI: Mock-up non menzionati + regola applicazione errata
+Corretto: I mock-up sono obbligatori per CL1, ma NON per ogni saldatore.
+          Regola: almeno 2 mock-up per azienda, esclusivamente per i
+          saldatori che realizzeranno giunti soggetti a mock-up.
+          I saldatori che non eseguono quei giunti possono essere
+          coperti da semplice qualifica (patentino).
+Fonte: QT.6495.023 + esperienza campo
+
+#004 | 2026-04-19
+Norma: EN 15085-2
+Errore AI: Certificato EN 15085 non contestualizzato correttamente
+Corretto: Il certificato EN 15085-2 dell'azienda deve essere:
+          1) In corso di validità su joincert.eu
+          2) Coprire i processi di saldatura usati (WPQR presenti)
+          La verifica va fatta su joincert.eu, non basta il documento cartaceo.
+Fonte: esperienza campo + EN 15085-2
+
+#005 | 2026-04-19
+Norma: EN 15085 + requisiti materiale d'apporto
+Errore AI: Materiale d'apporto non trattato correttamente
+Corretto: Il materiale d'apporto deve essere provvisto di certificato
+          tipo 3.1 + 2.2 emesso dal produttore.
+          Deve essere presente su joincert.eu con qualifica in corso
+          di validità, incluse le posizioni di saldatura dichiarate
+          sul certificato.
+          ECCEZIONE: materiale d'apporto con certificato joincert
+          scaduto può essere accettato SE si dimostra che l'acquisto
+          è avvenuto prima della scadenza del certificato.
+Fonte: esperienza campo
+
+#006 | 2026-04-19
+Argomento: Coerenza documentale interna al Welding Book
+Fonte: esperienza campo IWE
+
+#007 | 2026-06-09
+Argomento: Check spessori WPS/WPQR vs disegno costruttivo
+Errore AI: Associato il check spessori all'Agente 3 (mock-up)
+Corretto: Il check copertura spessori WPS/WPQR deve confrontarsi con
+          TUTTI i giunti del disegno costruttivo, non solo quelli
+          soggetti a mock-up.
+          L'Agente 3 copre esclusivamente i giunti mock-up (sottoinsieme).
+          Il modulo di lettura disegni costruttivi per questo check
+          va sviluppato come feature separata in sprint successivo.
+Fonte: esperienza campo IWE
+
+#008 | 2026-06-09
+Argomento: Corrispondenza WPS/WPQR — numero di riferimento
+Errore AI: NC STOP se il numero WPS nel Welding Book non corrisponde
+           esattamente al numero WPS citato nella WPQR
+Corretto: La WPQR spesso fa riferimento a una WPS PRELIMINARE usata
+          durante la qualifica, diversa dalla WPS di produzione finale.
+          Il check corretto NON è la corrispondenza del numero documento,
+          ma verificare che la WPS di produzione rientri nei RANGE
+          qualificati dalla WPQR:
+          - Range spessori (t e 2t secondo ISO 15614-1)
+          - Range diametri (se applicabile)
+          - Processo di saldatura (111, 135, 141, ecc.)
+          - Materiale base (gruppo P secondo ISO 15608)
+          - Materiale d'apporto
+          - Posizione di saldatura
+          La NC scatta solo se la WPS di produzione esce dai range
+          qualificati dalla WPQR, non per difformità del numero documento.
+Fonte: esperienza campo IWE + ISO 15614-1
+
+#009 | 2026-06-13
+Argomento: ISO 15613 — trattamento nella verifica WPS/WPQR
+Errore AI: ISO 15613 segnalata come NC o ATTENZIONE
+Corretto: ISO 15613 è una norma LEGITTIMA per qualifica di giunti
+          non standard. Si rifà alla serie ISO 15614 ed è accettabile.
+          NON generare NC né ATTENZIONE.
+          Al massimo: APPUNTO informativo.
+          Testo suggerito: "Qualifica per giunto non standard — ISO 15613"
+Agente: Agent 1
+Fonte: esperienza campo IWE
+
+#010 | 2026-06-13
+Argomento: Firma/approvazione CS su WPS e WPQR
+Errore AI: Assenza firma CS segnalata come STOP o ATTENZIONE
+Corretto: Il CS può essere identificato con firma autografa, timbro,
+          sigla, o campo dedicato non standard — tutte modalità valide.
+          L'assenza di identificazione CS genera solo APPUNTO,
+          non blocca il Welding Book.
+Agente: Agent 1
+Fonte: esperienza campo IWE
+
+#011 | 2026-06-13
+Argomento: Anomalia cronologica WPS/WPQR
+Corretto: Data WPS antecedente alla data WPQR è NC STOP fondamentale.
+          Confermata come tale — nessuna modifica alla logica dell'agente.
+Agente: Agent 1
+Fonte: esperienza campo IWE
+
+#012 | 2026-06-13
+Argomento: Assenza documenti riferimento giunto (welding map/disegno)
+Corretto: Confermata come ATTENZIONE (non STOP).
+          L'agente non deve dare NC automatica per assenza welding map —
+          deve ragionare sul documento disponibile (disegno, mock-up,
+          tavola giunti) secondo EN 15085-3 Annex B e serie ISO 9692.
+Agente: Agent 1
+Fonte: esperienza campo IWE
+
+#013 | 2026-06-13
+Argomento: Verifica spessore materiale base — logica di calcolo
+Errore AI: Applicazione automatica della formula 0.5t/2t senza leggere
+           prima il range dichiarato nella WPQR
+Corretto: Logica in due passi obbligatori:
+          PASSO A — leggere il range qualificato DICHIARATO nella WPQR
+            (es. "FROM 3 TO 20mm", "qualified range: 3 to 20 mm").
+            Se presente, usarlo direttamente. NON ricalcolare.
+          PASSO B — solo se il range NON è dichiarato nella WPQR,
+            applicare la formula da ISO 15614-1:2017 §8.4.3.
+            ATTENZIONE: tabella BW ≠ tabella FW.
+            Identificare il tipo di giunto prima di applicare
+            la formula corretta.
+Agente: Agent 1
+Fonte: esperienza campo IWE + ISO 15614-1:2017 §8.4.3
+
+#014 | 2026-06-14
+Argomento: Report RT per alluminio + giunto BW
+Errore AI: RT cercato solo dentro il documento WQ
+Corretto: Il report RT non deve essere necessariamente dentro la WQ
+          (ISO 9606-2 non lo richiede esplicitamente nel documento
+          di qualifica).
+          Può essere un documento separato nel set documentale.
+          L'agente deve verificare che esista un report RT che
+          identifichi il giunto e il saldatore a cui si riferisce.
+          Se non trovato nel set documentale → ATTENZIONE (non STOP).
+          Se materiale non è Al o giunto non è BW → non applicabile.
+Riferimento: DVS 1619-1 §5.5.1
+Agente: Agent 2
+Fonte: esperienza campo IWE
+
+#015 | 2026-06-14
+Argomento: Norma applicabile nelle qualifiche saldatori (WQ)
+Errore AI: Norma non verificata rispetto a materiale e tipo saldatore
+Corretto: Matrice obbligatoria:
+          - Saldatore manuale + acciaio o Ni      → ISO 9606-1
+          - Saldatore manuale + alluminio          → ISO 9606-2
+          - Operatore meccanizzato o automatico
+            (qualsiasi materiale)                  → ISO 14732
+          Norma dichiarata errata vs matrice → NC STOP
+          Norma assente nel documento       → NC STOP
+          Esempio NC: operatore robotico acciaio con ISO 9606-2
+            dichiarata (corretto sarebbe ISO 14732).
+Agente: Agent 2
+Fonte: esperienza campo IWE
+
+#016 | 2026-06-14
+Argomento: Continuità semestrale WQ
+Errore AI: Assenza firma semestrale trattata come NC
+Corretto: Assenza firma semestrale nel PDF → APPUNTO (mai NC, mai ATTENZIONE).
+          Il rinnovo è spesso firmato in originale fisico presso il
+          fornitore durante le ispezioni reali e non viene caricato
+          nel welding book digitale.
+          Non alzare mai la gravità oltre APPUNTO per questo check.
+Agente: Agent 2
+Fonte: esperienza campo IWE
+
+#017 | 2026-06-20
+Argomento: Verifica WPS citata nel report mock-up + coerenza macrografie
+Errore AI: Verificare solo la presenza formale del report senza controllare
+           la WPS referenziata e la coerenza con i dati delle macrografie
+Corretto: L'agente deve (1) verificare che la WPS citata nel report esista
+          nel welding book e (2) che le variabili essenziali del giunto
+          (processo, materiale, spessore, posizione) rientrino nel campo
+          qualificato di quella WPS — logica analoga a
+          check_corrispondenza_1a1 di Agent 1, applicata al provino.
+          Materiale base: valori dichiarati nella sezione apposita devono
+          corrispondere a quelli misurabili nelle macrografie (coerenza
+          interna al documento).
+          Spessore nelle macro: se non corrisponde al nominale per problemi
+          di inglobamento in laboratorio, il report DEVE dichiarare
+          esplicitamente che quello spessore è stato tagliato.
+          Se non c'è nota esplicativa → NC.
+          Misure geometriche obbligatorie:
+            - FW → altezza gola (a)
+            - BW e giunti a penetrazione parziale → penetrazione
+          Devono essere riportate e conformi ai valori nominali del
+          disegno/WPS. Controllo sia di presenza che di accettabilità.
+Agente: Agent 3
+Fonte: esperienza campo IWE
+
+#018 | 2026-06-20
+Argomento: Report Visual Test — perimetro di verifica agente
+Errore AI: Includere la verifica annuale dell'acuità visiva nel check
+           automatico del welding book digitale
+Corretto: L'agente NON verifica l'acuità visiva — è controllabile solo
+          durante l'ispezione fisica, non nel welding book digitale.
+          L'agente verifica:
+            (1) Qualifica VT presente: ISO 9712 Level 2 o qualifica
+                interna documentata — entrambe accettate
+            (2) Documento firmato e datato dal CS
+            (3) Norma ISO 17637 citata nel report
+            (4) SN o lotto di riferimento del manufatto indicato
+                esplicitamente (tracciabilità diretta)
+            (5) Data emissione report VT successiva alla data di
+                produzione del manufatto — verificabile incrociando
+                con la data nel PFC
+Agente: Agent 3
+Fonte: esperienza campo IWE
+
+#019 | 2026-06-20
+Argomento: Classificazione T-Joint per ISO 15614-1 (BW vs FW)
+Errore AI: Classificare HV e HY come FW (fillet weld)
+Corretto: La distinzione BW/FW dipende dalla preparazione del cianfrino,
+          non dall'angolo tra i pezzi.
+          T-Joint senza preparazione del cianfrino → FW (cordone d'angolo)
+          T-Joint con cianfrino a piena penetrazione → HV → BW
+          T-Joint con cianfrino a penetrazione parziale → HY → BW parziale
+          L'agente NON deve mai classificare HV o HY come FW.
+Agente: Agent 3
+Fonte: esperienza campo IWE + ISO 15614-1
+
+#020 | 2026-06-20
+Argomento: Simbolo ISO 2553 nel report mock-up
+Errore AI: Assenza simbolo grafico ISO 2553 trattata come NC-ATTENZIONE
+Corretto: Il simbolo grafico ISO 2553 è apprezzabile ma NON obbligatorio.
+          La designazione testuale del giunto (es. ½HV10, HY, BW) è
+          sufficiente per identificare la tipologia.
+          Assenza del simbolo grafico → APPUNTO, mai NC-ATTENZIONE o NC-STOP.
+Agente: Agent 3
+Fonte: esperienza campo IWE + ISO 2553
+
+#021 | 2026-06-20
+Argomento: Discrepanza formattazione numero WPS nel report mock-up
+Errore AI: Variazione tipografica nel numero WPS trattata come NC-ATTENZIONE
+Corretto: Variazioni nella formattazione del numero WPS (es. 1526/19B vs
+          1526/019B) riferite chiaramente allo stesso documento → APPUNTO,
+          non NC-ATTENZIONE.
+          L'agente deve verificare la sostanza del riferimento,
+          non la forma tipografica del codice.
+Agente: Agent 3
+Fonte: esperienza campo IWE
+
+#022 | 2026-06-20
+Argomento: ISO 15613 nel contesto mock-up
+Errore AI: Generare NC o ATTENZIONE per la presenza di ISO 15613
+           invece di ISO 15614 come norma di qualifica della WPQR
+Corretto: ISO 15613 è una scelta tecnica legittima del CS, non richiede
+          approvazione esterna e non genera NC o ATTENZIONE.
+          La ISO 15613 fa esplicito riferimento alla ISO 15614 per i test —
+          l'agente verifica i parametri dichiarati nella WPQR stessa,
+          non applica meccanicamente le tabelle ISO 15614-1 §8.4.3.
+          Se un test previsto da ISO 15614 è assente nella WPQR ISO 15613
+          perché fisicamente impossibile sul giunto specifico
+          (es. RT su giunto HY a parziale penetrazione), l'assenza è
+          tecnicamente giustificata → APPUNTO, non NC.
+          L'agente deve riconoscere e dichiarare la giustificazione tecnica.
+Agente: Agent 3
+Fonte: esperienza campo IWE + ISO 15613 + ISO 15614
+
+#023 | 2026-06-20
+Argomento: Cronologia data WPS vs data report mock-up
+Errore AI: Data WPS successiva alla data del mock-up trattata come NC-ATTENZIONE
+Corretto: Se la data della WPS è successiva alla data del report mock-up,
+          l'osservazione è rilevante e deve essere segnalata, ma non è
+          bloccante.
+          → APPUNTO, mai NC-ATTENZIONE o NC-STOP.
+Agente: Agent 3
+Fonte: esperienza campo IWE
+
+#024 | 2026-06-20
+Argomento: Campo CLIENTE vuoto nel report mock-up
+Errore AI: Campo CLIENTE vuoto trattato come NC-ATTENZIONE
+Corretto: Il campo CLIENTE non è mai stato richiesto esplicitamente come
+          obbligatorio nel report mock-up. Se vuoto → APPUNTO, non
+          NC-ATTENZIONE. Campi non esplicitamente obbligatori per contratto,
+          se assenti o vuoti, non possono essere bloccanti.
+Agente: Agent 3
+Fonte: esperienza campo IWE + QT.6495.023
+
+#025 | 2026-06-20
+Argomento: Collegamento WPQR → WPS nel report mock-up
+Errore AI: Generare NC-ATTENZIONE perché la WPQR non cita esplicitamente
+           la WPS di riferimento del mock-up
+Corretto: Una WPQR può supportare più WPS diverse — è corretto e normale
+          che la WPQR faccia riferimento ad una WPS diversa da quella
+          citata nel mock-up. L'agente deve verificare SOLO che i parametri
+          qualificati dalla WPQR coprano le variabili essenziali del giunto
+          del mock-up. Non esiste requisito di collegamento esplicito
+          biunivoco tra WPS e WPQR.
+          Ragionamento errato → mai generare NC per questo motivo.
+Agente: Agent 3
+Fonte: esperienza campo IWE + ISO 15614-1
+
+#026 | 2026-06-20
+Argomento: Posizione di saldatura non dichiarata nel report mock-up
+Errore AI: Assenza della posizione di saldatura nel report mock-up
+           trattata come NC-ATTENZIONE
+Corretto: Se la posizione di esecuzione del giunto non è esplicitamente
+          dichiarata nel report mock-up → APPUNTO, non NC-ATTENZIONE.
+          La posizione qualificata fa fede da quanto dichiarato nella WPS
+          collegata. L'osservazione è comunque rilevante e deve essere
+          segnalata come APPUNTO per incentivare la compilazione completa.
+Agente: Agent 3
+Fonte: esperienza campo IWE + ISO 15614-1 §8.4.3
+
+#027 — EN 10204 tipo 2.2: valori nominali sono corretti per definizione
+Il certificato 2.2 riporta per definizione valori nominali di specifica — non valori misurati sul lotto. Quello è il 3.1. L'agente non deve segnalare come NC la presenza di valori nominali nel 2.2. Era un falso positivo.
+
+#028 — DoP: verifica cronologica vs scadenza formale
+Le DoP non hanno scadenza formale. La verifica corretta è che la data di emissione della DoP sia anteriore o uguale alla data del certificato 3.1 associato. Se DoP 2016 e 3.1 2021 → coerente, nessuna NC. Se DoP 2022 e 3.1 2021 → ATTENZIONE.
+
+#029 | 2026-07-11 - Materiale d'apporto — evidenza Joincert scaduto
+AI: solo DDT/bolla/PFC accettati come evidenza ante-scadenza, PO scartato o confuso in data / Corretto: PO/ordine cliente è impegno contrattuale valido, verificare data del PO non della consegna / Agente 4 / Angelo (IWE)
+
+#030 | 2026-07-14 / Bug fix / API key non ereditata da sessione terminale scaduta / Aggiunto load_dotenv() in utils.py / utils.py / Diagnosi Angelo
+
+#031 | 2026-07-18 / Mock-up CHECK-3 riferimenti report / Agente ha alzato a NC-ATTENZIONE il cumulo di (data disegno mancante + citazione ISO 6520-1 incoerente tra pagine) / Downgrade a APPUNTO: nessuno dei due elementi raggiunge singolarmente la soglia NC, il cumulo da solo non giustifica l'escalation / Agente 3 (mock-up) / Angelo (IWE)
+
+#032 | 2026-07-18 / Agent4 copertura certificati Excel vs PDF / Gap documentale 65/71 (8.5% coverage) classificato ATTENZIONE / Corretto: qualsiasi certificato dichiarato in Excel senza PDF corrispondente in cartella → NC-STOP, zero tolleranza, nessuna soglia percentuale / Agente 4 (materiali) / Angelo (IWE)
+
+#033 | 2026-07-19 / Mock-up CHECK-3 severità / Fix validato: separazione esplicita tra trigger NC-ATTENZIONE (assenza riferimento accettabilità) e osservazioni sempre-APPUNTO (data disegno, citazioni incoerenti tra pagine) con clausola anti-cumulo / Agente 3 (mock-up) / Angelo (IWE)
+
+#034 | 2026-08-02 / Agent3-VT / Certificato qualifica trattato come VT report indipendente con giudizio STOP / Deve essere riconosciuto come documento di supporto, cross-validare solo CHECK-1 del VT principale, nessun giudizio complessivo proprio / Agent 3 / Angelo IWE
+
+#035 | 2026-08-02 / Agent1-WPS-WPQR / Diametro filo consumabile diverso tra WPS e WPQR trattato come NC-ATTENZIONE (variabile essenziale) / Il diametro del filo NON è variabile essenziale per processo 135 secondo ISO 15614-1 — conta la classificazione del filo (norma + caratteristiche chimiche/meccaniche), non il diametro. Declassato: nessuna NC generata. / Agent 1 / Angelo IWE
+
+#036 | 2026-08-02 / Agent5-Saldatrici / Certificato taratura saldatrice con evidenza esplicita di scadenza trattato sempre come APPUNTO (tetto massimo del tool) / Se il report della saldatrice mostra evidenza esplicita e inequivocabile che la validità della taratura è scaduta, l'esito deve poter salire a STOP — il tetto "mai STOP" resta valido solo per il caso di assenza documentale generica del certificato primario. / Agent 5 / Angelo IWE
+
+#037 | 2026-08-02 / Agent5-Saldatrici / Certificato taratura strumento primario con evidenza esplicita di scadenza limitato a NC APPUNTO (tetto massimo del tool) / Scadenza comprovata nel testo del report (non semplice assenza documentale) deve generare NC STOP — mette in dubbio l'intera taratura della saldatrice. Tetto "mai STOP" mantenuto per assenza documentale generica e strumento non identificabile. / Agent 5 / Angelo IWE
+
+#038 | 2026-08-02 / Supervisor-check_copertura_wq / Copertura WQ <2 saldatori con range compatibile trattata come ATTENZIONE non derogabile (regola fissata sessione precedente, log #YYY) / REVERSIONE: dopo revisione normativa, Angelo conferma che il requisito minimo di 2 saldatori con WQ validi e range di copertura compatibile è un requisito bloccante — severità corretta è STOP, non ATTENZIONE. Sostituisce integralmente la regola precedente. / Supervisor / Angelo IWE
+
+#039 | 2026-08-02 / Supervisor-check_copertura_wq / Copertura WQ <2 saldatori con range compatibile trattata come ATTENZIONE non derogabile (regola del 2026-07-30) / REVERSIONE dopo revisione normativa: il requisito minimo di 2 saldatori con WQ validi è bloccante — severità corretta è STOP. Sostituisce integralmente la regola precedente. / Supervisor / Angelo IWE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=============================
+REGOLE DI COERENZA TRA DOCUMENTI
+=============================
+
+A) WELDING MAP (cartella 04) — nodo centrale di coerenza:
+   Deve collegare per ogni giunto indicato sul disegno:
+   - Tipologia giunto: butt weld, fillet weld, partial/full penetration, T-joint
+   - Spessori e tipologia materiale base
+   - WPS di riferimento
+   - WPQR a copertura della WPS
+   - WQ (patentini saldatori) a copertura del giunto
+   - Mock-up realizzati per i giunti soggetti
+   - Materiale d'apporto utilizzato
+
+B) COERENZA DATE — sequenza cronologica obbligatoria:
+   WPQR → WPS (data uguale o successiva alla WPQR)
+   WPS + Mock-up + WQ + Materiale → PFC (data uguale o successiva a tutti)
+   PFC → VT Report (data sempre successiva alla produzione indicata nel PFC)
+
+C) REPORT VT — requisiti minimi:
+   - Data esecuzione successiva alla produzione indicata nel PFC
+   - Riferimento disegno elemento controllato
+   - Riferimento Serial Number (SN) del manufatto
+   - Firma del Coordinatore di Saldatura (CS)
+
+D) COERENZA WPQR / WPS / MATERIALE D'APPORTO:
+   Il materiale d'apporto utilizzato in produzione deve essere
+   coerente con quanto qualificato nella WPQR e indicato nella WPS.
+
+E) TUTTO collegato ai disegni di riferimento come documento base.

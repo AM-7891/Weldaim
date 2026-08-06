@@ -1,0 +1,38 @@
+WELDAIM - MAPPA AGENTI <-> REPORT JSON
+========================================
+Riferimento rapido: quale script produce quale report, e a quale
+numero di "Agent" corrisponde nella logica del Supervisor.
+
+Aggiornare questo file manualmente se si aggiungono/rinominano script.
+
+--------------------------------------------------------------------
+SCRIPT (in agents\)              REPORT JSON PRODOTTO      AGENT #
+--------------------------------------------------------------------
+agent_wps_wpqr.py            ->  report_agent1.json    ->  Agent 1
+agent_wq.py                  ->  report_agent2.json    ->  Agent 2
+agent_mockup_vt.py           ->  report_agent3.json    ->  Agent 3
+agent_materiali.py           ->  report_agent4.json    ->  Agent 4
+agent_pfc_en15085.py         ->  report_agent5.json    ->  Agent 5
+                                  (verificare nome esatto script Agent 5)
+supervisor_agent.py          ->  report_supervisor.json -> Supervisor
+--------------------------------------------------------------------
+
+COSA FA OGNI AGENT (in breve):
+  Agent 1 = WPS/WPQR (analisi procedure e qualifiche di procedura)
+  Agent 2 = Qualifiche saldatore (WQ)
+  Agent 3 = Mock-up + report VT (visual test)
+  Agent 4 = Certificati materiale (base + apporto)
+  Agent 5 = PFC + EN 15085 + attrezzature di saldatura
+
+ORDINE DI ESECUZIONE CONSIGLIATO (uno alla volta, non in parallelo):
+  1. agent_wps_wpqr.py
+  2. agent_wq.py
+  3. agent_mockup_vt.py
+  4. agent_materiali.py
+  5. agent_pfc_en15085.py   (se disponibile - serve per check #2)
+  6. supervisor_agent.py    (SEMPRE PER ULTIMO, a valle di tutti gli altri)
+
+NOTA: ogni script sovrascrive il proprio report_agentN.json ad ogni
+esecuzione. Se vuoi conservare i risultati di un run per confronto,
+copia manualmente la cartella report_agents\ in un Backup\YYYY-MM-DD\
+PRIMA di rilanciare gli agenti.

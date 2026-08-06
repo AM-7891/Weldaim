@@ -1,0 +1,22 @@
+﻿# Ambiente virtuale Python
+.venv/
+# Cache Python
+__pycache__/
+*.pyc
+# Backup locali (dati di test/clienti)
+Backup/
+# Report generati (dati proprietari clienti/fornitori)
+report_agents/
+# File temporanei OS
+.DS_Store
+Thumbs.db
+# Database vettoriale (rigenerabile dai PDF sorgente)
+chroma_db/
+# Tool esterno (binari terze parti)
+poppler/
+# File obsoleti
+old/
+# Documenti forniti da fornitori (dati proprietari)
+test_docs/
+.env
+linee_guida/
