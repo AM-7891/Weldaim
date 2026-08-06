@@ -20,3 +20,4 @@ old/
 test_docs/
 .env
 linee_guida/
+rag_dev/chunks.json
