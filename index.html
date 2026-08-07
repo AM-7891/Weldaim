@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="WeldAIM">
+<meta name="theme-color" content="#1e2535">
+<title>WeldAIM — Hub</title>
+<script>
+// Rimuove Service Worker installati da versioni precedenti del sito
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
+  });
+}
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg0:#1e2535; --bg1:#28354d; --bg2:#32405a;
+  --border:rgba(255,255,255,0.13); --border2:rgba(255,255,255,0.24);
+  --text:#eaf0fa; --text2:#b8cce4; --text3:#7a96c0;
+  --teal:#00c4a0; --teal-glow:rgba(0,196,160,0.11);
+  --blue:#4a9de0; --blue-glow:rgba(74,157,224,0.11);
+  --amber:#e09430; --amber-glow:rgba(224,148,48,0.11);
+  --purple:#9060c8; --purple-glow:rgba(144,96,200,0.11);
+  --r-md:12px; --r-lg:18px;
+  --shadow:0 2px 12px rgba(0,0,0,0.28), 0 0 0 0.5px rgba(0,0,0,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100vh;background:var(--bg0);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;min-height:100vh}
+ 
+.wrap{width:100%;max-width:420px}
+ 
+/* Header */
+.header{text-align:center;margin-bottom:2.5rem}
+.brand{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--teal);background:var(--teal-glow);border:.5px solid rgba(0,196,160,.28);padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:1rem}
+.title{font-size:28px;font-weight:600;letter-spacing:-.5px;color:var(--text);margin-bottom:.4rem}
+.title span{color:var(--teal)}
+.subtitle{font-size:13px;color:var(--text3);font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+ 
+/* Cards */
+.cards{display:flex;flex-direction:column;gap:12px;margin-bottom:2rem}
+ 
+.card{display:flex;align-items:center;gap:1rem;background:var(--bg1);border:.5px solid var(--border);border-radius:var(--r-lg);padding:1.125rem 1.25rem;text-decoration:none;color:inherit;transition:all .18s;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .18s}
+.card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,0.32)}
+.card:hover::before{opacity:1}
+.card:active{transform:translateY(0)}
+ 
+.card.gantt{border-left:2.5px solid var(--teal)}
+.card.gantt::before{background:var(--teal-glow)}
+.card.spese{border-left:2.5px solid var(--amber)}
+.card.spese::before{background:var(--amber-glow)}
+.card.note{border-left:2.5px solid var(--purple)}
+.card.note::before{background:var(--purple-glow)}
+.card.roadmap{border-left:2.5px solid var(--blue)}
+.card.roadmap::before{background:var(--blue-glow)}
+ 
+.card-icon{font-size:22px;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border-radius:10px;border:.5px solid var(--border)}
+.card-body{flex:1;min-width:0}
+.card-title{font-size:15px;font-weight:500;color:var(--text);margin-bottom:3px}
+.card-desc{font-size:12px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
+.card-arrow{color:var(--text3);font-size:16px;flex-shrink:0;transition:transform .18s}
+.card:hover .card-arrow{transform:translateX(3px);color:var(--text2)}
+ 
+/* Sync badge */
+.sync-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;padding:2px 7px;border-radius:10px;background:rgba(42,184,104,.1);color:#2ab868;border:.5px solid rgba(42,184,104,.25);margin-top:4px;display:inline-block}
+ 
+/* Footer */
+.footer{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.06em}
+.footer a{color:var(--text3);text-decoration:none}
+.footer a:hover{color:var(--teal)}
+</style>
+</head>
+<body>
+<div class="wrap">
+ 
+  <div class="header">
+    <div class="brand">WELDAIM.AI</div>
+    <div class="title">Weld<span>AIM</span></div>
+    <div class="subtitle">Modulo 1 — Welding Book Agent</div>
+  </div>
+ 
+  <div class="cards">
+ 
+    <a class="card gantt" href="gantt_weldaim_v7.html">
+      <div class="card-icon">📋</div>
+      <div class="card-body">
+        <div class="card-title">Piano Operativo</div>
+        <div class="card-desc">Gantt · Sprint · Progressi</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+    <a class="card spese" href="weldaim_spese_v4.html">
+      <div class="card-icon">💶</div>
+      <div class="card-body">
+        <div class="card-title">Budget & Investimenti</div>
+        <div class="card-desc">Spese · Abbonamenti · API</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+    <a class="card note" href="weldaim_note_v2.html">
+      <div class="card-icon">💡</div>
+      <div class="card-body">
+        <div class="card-title">Note di Progetto</div>
+        <div class="card-desc">Idee · Feature · Architettura</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+    <a class="card roadmap" href="weldaim_roadmap_v3.html">
+      <div class="card-icon">🗺️</div>
+      <div class="card-body">
+        <div class="card-title">Roadmap Post-Demo</div>
+        <div class="card-desc">Backlog · Priorità · Milestone</div>
+        <div class="sync-badge">☁ Google Sheets</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </a>
+ 
+  </div>
+ 
+  <div class="footer">
+    weldaim.ai &nbsp;·&nbsp; Dati sincronizzati su Google Sheets<br><br>
+    <a href="https://weldaim.ai" target="_blank">weldaim.ai</a>
+  </div>
+ 
+</div>
+</body>
+</html>
