@@ -75,6 +75,11 @@ from dotenv import load_dotenv
 # cloud, PC di un collega), senza scrivere "C:\Users\angma\..." a mano.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Crea la cartella report_agents se non esiste — necessario perche' e' esclusa
+# da Git (dati proprietari dei report), quindi su un ambiente nuovo (server
+# cloud, PC di un collega) semplicemente non esiste finche' non la creiamo qui.
+(BASE_DIR / "report_agents").mkdir(exist_ok=True)
+
 load_dotenv()
 
 # ---------------------------------------------------------------------------
