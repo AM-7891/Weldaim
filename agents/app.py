@@ -35,9 +35,10 @@ import agent_mockup_vt as agente3
 import agent_materiali as agente4
 import agent_pfc_en15085 as agente5
 import supervisor_agent as supervisore
+from utils import BASE_DIR
 
-REPORT_DIR = r"C:\Users\angma\Desktop\weldaim\report_agents"
-TEST_DIR = r"C:\Users\angma\Desktop\weldaim\test_docs"
+REPORT_DIR = str(BASE_DIR / "report_agents")
+TEST_DIR = str(BASE_DIR / "test_docs")
 CARTELLA_MOCKUP = os.path.join(TEST_DIR, "07_MOCKUP")
 CARTELLA_VT = os.path.join(TEST_DIR, "09_VT")
 DATA_PRODUZIONE = None  # best-effort, come da __main__ originale di Agente 3

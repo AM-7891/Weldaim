@@ -39,6 +39,24 @@ Aggiornamento 2026-07-28:
   ogni chiamata (cache_creation_input_tokens / cache_read_input_tokens), non
   assumere che il caching stia funzionando solo perche' il codice non da' errori.
   Cache TTL: 5 minuti di default, si rinnova ad ogni hit.
+
+Aggiornamento 2026-08-11:
+- Aggiunto BASE_DIR calcolato in automatico dalla posizione di questo file, invece di
+  percorsi Windows scritti a mano. Prerequisito per il deploy su Streamlit Community
+  Cloud (Linux), dove "C:\\Users\\angma\\..." non esiste. POPPLER_PATH ora si costruisce
+  a partire da BASE_DIR. NOTA: tesseract_cmd resta invariato per ora (percorso di sistema,
+  non di progetto - verra' affrontato a parte nello step di deploy vero e proprio).
+
+Aggiornamento 2026-08-12:
+- Risolta la nota lasciata aperta ieri su tesseract_cmd. Aggiunto rilevamento del
+  sistema operativo con platform.system(): su Windows, POPPLER_PATH e tesseract_cmd
+  restano percorsi espliciti come prima (sviluppo locale invariato). Su qualsiasi
+  altro sistema (Linux, quindi Streamlit Community Cloud), POPPLER_PATH diventa None
+  (pdf2image cerca Poppler da solo nel PATH di sistema) e tesseract_cmd non viene
+  impostato affatto (pytesseract cerca "tesseract" da solo nel PATH di sistema).
+  Prerequisito: file packages.txt nella radice del progetto (weldaim\\, non agents\\)
+  con poppler-utils, tesseract-ocr, tesseract-ocr-ita — installati in automatico da
+  Streamlit Cloud al deploy. Nessun impatto sul comportamento Windows, verificato.
 """
 
 import os
@@ -46,8 +64,16 @@ import re
 import json
 import fitz
 import pytesseract
+import platform
+from pathlib import Path
 from pdf2image import convert_from_path
 from dotenv import load_dotenv
+
+# BASE_DIR = cartella radice del progetto (weldaim\), calcolata risalendo di due
+# livelli da questo file: agents\utils.py -> agents\ -> weldaim\.
+# Cosi' il percorso si ricalcola da solo ovunque giri il codice (PC tuo, server
+# cloud, PC di un collega), senza scrivere "C:\Users\angma\..." a mano.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv()
 
@@ -55,8 +81,19 @@ load_dotenv()
 # CONFIGURAZIONE GLOBALE
 # ---------------------------------------------------------------------------
 
-POPPLER_PATH = r"C:\Users\angma\Desktop\weldaim\poppler\Library\bin"
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# Poppler e Tesseract si comportano diversamente a seconda del sistema operativo:
+# - Windows (sviluppo locale): binari scaricati a mano nel progetto, serve un
+#   percorso esplicito perche' Windows non li conosce di default.
+# - Linux (Streamlit Community Cloud): installati come pacchetti di sistema
+#   tramite packages.txt (poppler-utils, tesseract-ocr, tesseract-ocr-ita),
+#   e reperibili in automatico nel PATH — nessun percorso esplicito necessario.
+if platform.system() == "Windows":
+    POPPLER_PATH = str(BASE_DIR / "poppler" / "Library" / "bin")
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    POPPLER_PATH = None  # pdf2image cerca Poppler nel PATH di sistema
+    # pytesseract.pytesseract.tesseract_cmd non va impostato qui: pytesseract
+    # cerca "tesseract" nel PATH di sistema di default su Linux.
 
 SOGLIA_TESTO_NATIVO = 50
 

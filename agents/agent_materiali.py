@@ -52,7 +52,8 @@ from utils import (
     analizza_pdf_chunked,
     analizza_testo_chunked,
     trova_file_per_estensione,
-    pulisci_json
+    pulisci_json,
+    BASE_DIR,
 )
 
 load_dotenv()
@@ -1028,13 +1029,13 @@ def stampa_report(report: dict):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    PERCORSO_TEST = r"C:\Users\angma\Desktop\weldaim\test_docs"
+    PERCORSO_TEST = str(BASE_DIR / "test_docs")
 
     report = analizza_materiali(PERCORSO_TEST)
     stampa_report(report)
 
     # Salva il report JSON per il supervisore
-    output_json = r"C:\Users\angma\Desktop\weldaim\report_agents\report_agent4.json"
+    output_json = str(BASE_DIR / "report_agents" / "report_agent4.json")
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
     print(f"\n[OUTPUT] Report JSON salvato in: {output_json}")

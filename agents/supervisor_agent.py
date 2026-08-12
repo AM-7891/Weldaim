@@ -32,13 +32,32 @@ deriva gia' intercettato altrove nel progetto (vedi VINCOLO SULL'ESITO
 COMPLESSIVO in CHECK-2 di Agent 3). Aggiunta una riga vincolante che chiude
 esplicitamente la possibilita' di deroga discrezionale sulla severita' di
 questa condizione.
+
+NOTA (2026-08-08): PROMPT_CHECK2 aggiornato in seguito all'espansione dello
+schema digest WPQR in agent_wps_wpqr.py (campo unico range_spessore_qualificato
+sostituito con campi separati per tipo di giunto: range_spessore_bw,
+range_spessore_fw_t1, range_spessore_fw_t2, altezza_gola_fw). Causa: verificato
+su WPQR reale (RINA/Abbati 01/16) che una singola WPQR qualifica comunemente
+sia BW sia FW con range diversi - un campo unico causava perdita/ambiguita' del
+dato nel confronto con lo scope del certificato EN 15085, non un problema di
+qualita' OCR come inizialmente ipotizzato. Il check ora confronta il campo
+BW-specifico o FW-specifico a seconda del tipo di giunto in esame, invece di
+un confronto generico su un solo valore.
+
+NOTA (2026-08-10): PROMPT_CHECK2 esteso con mappe di copertura gruppo
+materiale esplicite (ISO 15614-1 Tabella 5 per acciai gruppi 1/2/3, ISO
+15614-2 Tabella 4 per alluminio) e correzione dominio #023 generalizzata
+(incoerenza interna gruppo dichiarato vs materiale provino citato nelle
+note). Le mappe sono fornite come testo autorevole nel prompt (opzione A -
+veloce); refactor a override Python deterministico (opzione B) rimandato
+a sessione dedicata, vedi roadmap.
 """
 
 import os
 import json
 import anthropic
 
-from utils import pulisci_json  # riusa la utility gia' validata negli altri agenti
+from utils import pulisci_json, BASE_DIR  # riusa la utility gia' validata negli altri agenti
 
 # ---------------------------------------------------------------------------
 # CONFIGURAZIONE GLOBALE
@@ -48,7 +67,7 @@ from utils import pulisci_json  # riusa la utility gia' validata negli altri age
 MODEL = "claude-sonnet-4-6"
 
 # Cartella dove i 5 agenti salvano i loro report JSON
-REPORT_DIR = r"C:\Users\angma\Desktop\weldaim\report_agents"
+REPORT_DIR = str(BASE_DIR / "report_agents")
 
 # Mappa nome file -> chiave interna, cosi' l'orchestratore sa dove cercare ogni report
 FILE_REPORT = {
@@ -266,19 +285,98 @@ L'unico confronto valido e' sui RANGE TECNICI (processo, materiale,
 dimensione), non sui nomi dei documenti.
 
 FONTE DEI DATI TECNICI WPQR (importante — leggi qui, non altrove nel
-report Agent 1): i dati tecnici di ciascuna WPQR (numero_wpqr, processo_
-saldatura, gruppo_materiale_base, range_spessore_qualificato, materiale_
-apporto, posizioni_qualificate) si trovano nel campo "wpqr_digests" del
-report Agent 1 — una lista con un digest per ciascuna WPQR analizzata.
-Questo campo contiene i dati estratti direttamente dai documenti WPQR
-originali (via OCR/chunking) e va usato come fonte primaria per i tre
-controlli sotto. Il campo "dettaglio_check" del report Agent 1 contiene
-invece solo gli ESITI dei check interni di Agent 1 (conformi/non conformi),
-non i dati tecnici grezzi — non affidarti a quello per estrarre processo/
-materiale/range. Se un digest in "wpqr_digests" ha un campo null o assente,
-quel singolo parametro non e' verificabile per quella WPQR (vedi regola
-APPUNTO sotto) — ma prima di dichiarare un dato mancante, controlla
-attentamente in wpqr_digests: e' la fonte dove il dato, se estratto, si trova.
+report Agent 1): i dati tecnici di ciascuna WPQR si trovano nel campo
+"wpqr_digests" del report Agent 1 — una lista con un digest per ciascuna
+WPQR analizzata. Questo campo contiene i dati estratti direttamente dai
+documenti WPQR originali (via OCR/chunking) e va usato come fonte primaria
+per i tre controlli sotto. Il campo "dettaglio_check" del report Agent 1
+contiene invece solo gli ESITI dei check interni di Agent 1 (conformi/non
+conformi), non i dati tecnici grezzi — non affidarti a quello per estrarre
+processo/materiale/range.
+
+IMPORTANTE SUL RANGE DIMENSIONALE (spessore/gola): ogni digest in
+"wpqr_digests" può riportare FINO A 4 campi di spessore distinti e NON
+intercambiabili tra loro:
+- range_spessore_bw (spessore materiale base per giunti Butt Joint/BW)
+- range_spessore_fw_t1 e range_spessore_fw_t2 (spessore materiale base
+  per giunti Fillet/FW — due lati del giunto)
+- altezza_gola_fw (gola del cordone d'angolo, campo "Throat thickness" —
+  particolarmente rilevante per giunti FW single pass)
+Una WPQR può avere valorizzati SOLO i campi BW, SOLO i campi FW, o
+ENTRAMBI se qualifica entrambi i tipi di giunto (caso comune - vedi campo
+tipo_giunto_qualificato del digest). Quando confronti il range dimensionale
+col certificato EN 15085, usa il campo che corrisponde al tipo di giunto
+rilevante per il confronto in corso — se il certificato specifica un range
+per giunti BW, confrontalo con range_spessore_bw, non con i campi FW, e
+viceversa. Non fondere i valori di campi diversi in un unico confronto.
+
+Se un digest ha un campo null o assente, quel singolo parametro non e'
+verificabile per quella WPQR (vedi regola APPUNTO sotto) — ma prima di
+dichiarare un dato mancante, controlla attentamente in wpqr_digests: e' la
+fonte dove il dato, se estratto, si trova.
+
+MAPPE DI COPERTURA GRUPPO MATERIALE (non derogabili - applica ESATTAMENTE
+questi valori, non dedurre autonomamente dalla normativa. Copertura =
+"il gruppo materiale del provino qualifica anche i gruppi elencati").
+
+Acciai al carbonio - arco metallico (ISO 15614-1 Tabella 5 + nota a,
+ISO 15608 Tabella 1, limitato ai gruppi 1/2/3 - gli unici in uso su
+questo progetto):
+  1.1 -> copre: 1.1
+  1.2 -> copre: 1.1, 1.2
+  1.3 -> copre: 1.1, 1.2, 1.3
+  1.4 -> copre: 1.4 (isolato, criterio corrosione atmosferica, non
+         ordinato per snervamento)
+  2.1 -> copre: 1.1, 1.2, 2.1
+  2.2 -> copre: 1.1, 1.2, 2.1, 2.2
+  3.1 -> copre: 1.1, 1.2, 2.1, 3.1
+  3.2 -> copre: 1.1, 1.2, 2.1, 3.1, 3.2
+  3.3 -> copre: 3.3 (isolato, precipitation-hardened, nessuna gerarchia
+         esplicita con gli altri sottogruppi)
+Se nel digest o nel certificato compare un gruppo materiale NON elencato
+sopra (es. 4, 5, 6, 7, 8, 9, 10, 11), NON applicare queste mappe - segnala
+il dato come APPUNTO (gruppo materiale fuori dalla copertura attualmente
+codificata, richiede verifica manuale IWE) invece di dedurre una
+copertura.
+
+Alluminio - arco (ISO 15614-2 Tabella 4) - copertura per giunti simili,
+specifica per coppia, non monotona:
+  21   -> copre: 21
+  22.1 -> copre: 22.1, 22.2
+  22.2 -> copre: 22.2, 22.1
+  22.3 -> copre: 22.3, 22.1, 22.2, 22.4
+  22.4 -> copre: 22.4, 22.1, 22.2, 22.3
+  23.1 -> copre: 23.1, 22.1, 22.2 (solo se filler Al-Mg), 22.3 (solo se
+          filler Al-Mg), 22.4 (solo se filler Al-Mg)
+  23.2 -> copre: 23.2, 23.1, 22.1, 22.2 (solo se filler Al-Mg), 22.3 (solo
+          se filler Al-Mg), 22.4 (solo se filler Al-Mg)
+  24.1 -> copre: 24.1
+  24.2 -> copre: 24.2, 24.1, 23.1 (solo se filler Al-Si)
+  25   -> copre: 25, 24.1, 24.2
+  26   -> copre: 26, 24.1 (solo per getti), 24.2 (solo per getti),
+          25 (solo per getti)
+NOTA: se una copertura e' condizionata a un filler specifico (Al-Mg,
+Al-Si) o a getti, verifica quel dato nel digest prima di concludere che la
+copertura si applica - se il dato sul filler/getto non e' disponibile nei
+report, segnala come APPUNTO (dato non verificabile), non come automatica
+non-copertura.
+
+REGOLA SPECIFICA - INCOERENZA INTERNA GRUPPO MATERIALE (correzione dominio
+#023, 2026-08-09, generalizzata 2026-08-10): puo' capitare che il campo
+gruppo materiale dichiarato nel digest WPQR sia INCOERENTE con il gruppo
+materiale derivabile dal materiale del provino citato nelle note dello
+STESSO documento (es. campo range = "1-1" ma materiale provino S355J2+N =
+gruppo reale 1.2). Questo NON e' un'ambiguita' di notazione benigna da
+risolvere con documenti esterni: e' un ERRORE DI COMPILAZIONE del
+certificato, verificabile internamente confrontando due campi dello stesso
+documento. Se rilevi questo tipo di incoerenza interna, NON generare un
+APPUNTO generico che rimanda a "verificare col certificato originale" -
+genera invece una NC ATTENZIONE che spiega esplicitamente l'incoerenza
+interna (quale campo dichiara cosa, quale gruppo risulta effettivamente
+dal materiale del provino citato nello stesso documento, e se quel gruppo
+reale risulta comunque coperto dallo scope del certificato applicando le
+mappe sopra). La copertura effettiva dello scope non elimina la necessita'
+di segnalare l'errore di compilazione del documento.
 
 REPORT AGENT 1 (analisi WPQR):
 {report_agent1_json}
@@ -292,12 +390,15 @@ ESEGUI QUESTO CONTROLLO per ciascun WPQR analizzato da Agent 1:
    processi elencati nello scope del certificato EN 15085?
 2. GRUPPO MATERIALE: il gruppo materiale (secondo CEN ISO/TR 15608)
    qualificato dal WPQR rientra nei gruppi materiale dello scope del
-   certificato?
-3. RANGE DIMENSIONALE: il range di spessore (BW) o gola (FW) qualificato
-   dal WPQR rientra nel range dimensionale dichiarato dal certificato -
-   SOLO SE il certificato riporta un range dimensionale esplicito. Se il
-   certificato non specifica dimensioni, segnala come dato non verificabile,
-   NON come non conformita'.
+   certificato? Applica le MAPPE DI COPERTURA GRUPPO MATERIALE sopra per
+   determinare quali gruppi risultano coperti dal gruppo del provino.
+3. RANGE DIMENSIONALE: il range di spessore (BW - usa range_spessore_bw)
+   o di gola (FW - usa altezza_gola_fw, o in sua assenza range_spessore_fw_t1/
+   range_spessore_fw_t2) qualificato dal WPQR rientra nel range dimensionale
+   dichiarato dal certificato - SOLO SE il certificato riporta un range
+   dimensionale esplicito per quel tipo di giunto. Se il certificato non
+   specifica dimensioni, o se il WPQR non qualifica quel tipo di giunto,
+   segnala come dato non verificabile, NON come non conformita'.
 
 REGOLE DI SEVERITA':
 - Se NESSUNO dei parametri effettivamente verificabili (processo, materiale,
@@ -308,11 +409,18 @@ REGOLE DI SEVERITA':
 - Se ALMENO UNO dei parametri verificabili e' coerente ma uno o piu' altri
   risultano fuori scope (mismatch parziale) -> NC ATTENZIONE (mai APPUNTO:
   resta un gap di copertura certificativa sostanziale, anche se non totale).
+- Incoerenza interna tra gruppo materiale dichiarato nel campo range e
+  gruppo derivabile dal materiale del provino citato nelle note dello
+  stesso documento (vedi regola sopra) -> NC ATTENZIONE, anche se il
+  gruppo effettivo risulta comunque coperto dallo scope del certificato.
+  Il testo della NC deve spiegare l'incoerenza interna, non rimandare
+  genericamente a verifiche esterne.
 - Se un dato necessario al confronto manca in uno dei due report (es.
-  range dimensionale non estratto dal certificato) -> APPUNTO, specificando
-  quale dato manca e quale verifica manuale e' necessaria. Un dato mancante
-  NON conta come mismatch ai fini della regola STOP/ATTENZIONE sopra -
-  valuta solo sui parametri che sono stati effettivamente confrontabili.
+  range dimensionale non estratto dal certificato, o WPQR che non qualifica
+  quel tipo di giunto) -> APPUNTO, specificando quale dato manca. Un dato
+  mancante NON conta come mismatch ai fini della regola STOP/ATTENZIONE
+  sopra - valuta solo sui parametri che sono stati effettivamente
+  confrontabili.
 - Se tutti i parametri verificabili sono coerenti -> nessuna non conformita'
   per quel WPQR.
 
@@ -352,7 +460,11 @@ Rispondi SOLO in JSON con questa struttura, nessun testo fuori dal JSON:
 def check_wpqr_vs_en15085(report_agent1, report_agent5, client, model):
     """
     Cross-check #2: confronta i WPQR analizzati da Agent 1 con lo scope
-    del certificato EN 15085 analizzato da Agent 5.
+    del certificato EN 15085 analizzato da Agent 5. Usa i campi digest
+    BW/FW-specifici (aggiornato 2026-08-08) e applica le mappe di
+    copertura gruppo materiale (ISO 15614-1 Tabella 5 acciai gruppi 1/2/3,
+    ISO 15614-2 Tabella 4 alluminio) aggiunte 2026-08-10 - vedi nota in
+    testa al file.
     Ritorna None se manca uno dei due report necessari.
     """
     if report_agent1 is None or report_agent5 is None:
@@ -366,7 +478,7 @@ def check_wpqr_vs_en15085(report_agent1, report_agent5, client, model):
         report_agent5_json=json.dumps(report_agent5, ensure_ascii=False, indent=2)
     )
 
-    risultato = chiama_claude_json(client, model, prompt, max_tokens=3000, codice_check="SUP2")
+    risultato = chiama_claude_json(client, model, prompt, max_tokens=6000, codice_check="SUP2")
     risultato["tool"] = "check_wpqr_vs_en15085"
     return risultato
 
@@ -554,7 +666,7 @@ NON fondere i due esiti in un'unica severita'):
   VINCOLO NON DEROGABILE SULLA CONDIZIONE B (aggiornato 2026-08-02, dopo
   revisione normativa da parte di Angelo IWE — sostituisce integralmente
   il vincolo precedente del 2026-07-30 che fissava questa condizione a
-  ATTENZIONE): la severita' di questa condizione e' SEMPRE e SOLO STOP
+  ATTENZIONE): la severita' di questa condizione e' SEMPRE E SOLO STOP
   quando i WQ presenti coprono meno di 2 saldatori distinti, senza
   eccezioni discrezionali al ribasso. Non esiste una soglia inferiore che
   il modello possa applicare autonomamente per questa condizione: qualsiasi

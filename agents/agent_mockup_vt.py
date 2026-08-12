@@ -62,6 +62,7 @@ from utils import (
     trova_file_per_estensione,
     _prepara_content_multi_cache,
     _stampa_uso_cache,
+    BASE_DIR,
 )
 
 # Riuso del caricamento WPS/WPQR di Agente 1 — non duplichiamo la pipeline
@@ -774,8 +775,8 @@ if __name__ == "__main__":
     # WPS/WPQR NON sono più configurati qui: arrivano da agente1 (stessa cartella
     # test_docs, path condivisi con Agente 1 — vedi agente1.WPS_DIR/WPQR_DIR)
     # -------------------------------------------------------------------------
-    CARTELLA_MOCKUP = r"C:\Users\angma\Desktop\weldaim\test_docs\07_MOCKUP"
-    CARTELLA_VT     = r"C:\Users\angma\Desktop\weldaim\test_docs\09_VT"
+    CARTELLA_MOCKUP = str(BASE_DIR / "test_docs" / "07_MOCKUP")
+    CARTELLA_VT     = str(BASE_DIR / "test_docs" / "09_VT")
 
     # Data produzione manufatto — inserisci se disponibile, altrimenti lascia None
     DATA_PRODUZIONE = None  # es. "2025-03-15"
@@ -859,7 +860,7 @@ if __name__ == "__main__":
         "risultati_vt": risultati_vt,
         "documenti_supporto": documenti_supporto
     }
-    output_json = r"C:\Users\angma\Desktop\weldaim\report_agents\report_agent3.json"
+    output_json = str(BASE_DIR / "report_agents" / "report_agent3.json")
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump(report_agent3, f, ensure_ascii=False, indent=2)
     print(f"\n[OUTPUT] Report JSON salvato in: {output_json}")

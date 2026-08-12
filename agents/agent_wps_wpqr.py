@@ -42,6 +42,26 @@
 # struttura del prompt o alla logica di dominio dei 5 check.
 # Diagnostica aggiunta con _stampa_uso_cache() per verificare hit reali,
 # non assumerli dal codice.
+#
+# NOTA (2026-08-08 — SCHEMA DIGEST WPQR ESPANSO):
+# Il campo unico "range_spessore_qualificato" e' stato sostituito con
+# campi separati per tipo di giunto e tipo di spessore, dopo aver
+# verificato (test diretto OCR su WPQR reale RINA/Abbati 01/16, IWE
+# Angelo) che una singola WPQR qualifica comunemente SIA BW SIA FW con
+# range DIVERSI, e che nel documento sorgente esistono fino a 3 righe di
+# spessore normativamente distinte (Parent material thickness BW/FW,
+# Throat thickness, Weld deposit thickness) - comprimerle in un solo
+# campo stringa causava perdita/ambiguita' del dato, non un problema di
+# qualita' OCR o di taglio-chunk come inizialmente ipotizzato. Nuovi
+# campi: range_spessore_bw, range_spessore_fw_t1, range_spessore_fw_t2,
+# altezza_gola_fw, spessore_deposito_saldato. Aggiunti anche i campi
+# tipo_processo, passate, tipo_giunto_qualificato, diametro_esterno_
+# qualificato, tipo_gas_protezione, tipo_corrente, apporto_termico
+# (richiesti da IWE per copertura completa dei dati WPQR rilevanti).
+# Coerente modifica applicata a PROMPT_CHECK2 in supervisor_agent.py
+# (stessa sessione) - NON ancora applicata al prompt interno di
+# check_corrispondenza_1a1 in questo file, che resta su base testuale
+# generica per ora (task separato, fuori scope di questa modifica).
 
 import os
 import json
@@ -49,7 +69,7 @@ import anthropic
 from datetime import datetime
 from dotenv import load_dotenv
 
-from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache
+from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache, BASE_DIR
 
 load_dotenv()
 
@@ -110,13 +130,29 @@ Estrai in JSON SOLO i campi che trovi esplicitamente in QUESTO chunk (ometti le 
 
 - numero_wpqr
 - processo_saldatura (es. "135", "141")
-- gruppo_materiale_base (nomenclatura normativa, es. ISO/TR 15608 gruppo 1.1)
-- tipo_giunto (BW o FW)
-- range_spessore_qualificato (riporta il testo originale, es. "FROM 3 TO 20mm")
-- materiale_apporto (nomenclatura normativa, es. "EN ISO 14341-A")
+- tipo_processo (es. "Manual", "Partly mechanized", "Fully mechanized", "Automatic")
+- passate (es. "Single", "Multiple" — vedi campo "Single/Multiple pass")
+- gruppo_materiale_base (nomenclatura normativa, es. ISO/TR 15608 gruppo "1-1")
+- tipo_giunto_qualificato (es. "BW", "FW", "BW e FW" — leggi il campo "Joint type")
+
+IMPORTANTE SUGLI SPESSORI — nella WPQR possono comparire fino a 3 righe di spessore DISTINTE e NON intercambiabili. Estraile separatamente, riportando il testo originale così come scritto nel documento:
+- range_spessore_bw (spessore materiale base per giunti Butt Joint / BW, es. "3 to 24")
+- range_spessore_fw_t1 (spessore materiale base t1 per giunti Fillet/FW, es. "6 to 24")
+- range_spessore_fw_t2 (spessore materiale base t2 per giunti Fillet/FW, es. "6 to 24")
+- altezza_gola_fw (campo "Throat thickness" — es. "No restriction" o un range in mm; rilevante specialmente per FW single pass)
+- spessore_deposito_saldato (campo "Weld deposit thickness", es. "3 to 24" — è un dato diverso dallo spessore del materiale base, non confonderli)
+
+Se la WPQR qualifica SOLO BW, i campi FW (range_spessore_fw_t1, range_spessore_fw_t2, altezza_gola_fw) restano assenti — e viceversa. Non inventare un valore per un tipo di giunto non qualificato dal documento.
+
+Altri campi:
+- diametro_esterno_qualificato (campo "Outside diameter", es. "Over 150" — testo originale)
+- materiale_apporto (nomenclatura normativa e classificazione completa, es. "EN ISO 14341-A: G 46 4 M21 4Si1")
+- tipo_gas_protezione (campo "Shielding gas", es. "M14 with max. CO2% = 3,3")
+- tipo_corrente (campo "Type of welding current", es. "DCEP")
+- apporto_termico (campo "Heat input", testo originale con unità, es. "6,9 to 17,8 kJ/cm")
 - posizioni_qualificate (es. ["PA","PB"])
-- temperatura_preriscaldo (testo originale)
-- temperatura_interpass_max (testo originale)
+- temperatura_preriscaldo (campo "Preheat min.", testo originale)
+- temperatura_interpass_max (campo "Interpass temp. Max.", testo originale)
 - data_documento
 - note_rilevanti (altre info tecniche utili ai check di corrispondenza WPS/WPQR)
 
@@ -129,11 +165,22 @@ Rispondi SOLO con il JSON, nessun testo extra, nessun backtick.
 PROMPT_AGGREGAZIONE_WPQR = """Hai ricevuto estrazioni parziali da chunk diversi dello stesso documento WPQR.
 Unisci tutto in UN SOLO JSON consolidato con questi campi (usa null se un'informazione non è mai comparsa in nessun chunk):
 
-numero_wpqr, processo_saldatura, gruppo_materiale_base, tipo_giunto,
-range_spessore_qualificato, materiale_apporto, posizioni_qualificate,
-temperatura_preriscaldo, temperatura_interpass_max, data_documento, note_rilevanti
+numero_wpqr, processo_saldatura, tipo_processo, passate, gruppo_materiale_base,
+tipo_giunto_qualificato, range_spessore_bw, range_spessore_fw_t1, range_spessore_fw_t2,
+altezza_gola_fw, spessore_deposito_saldato, diametro_esterno_qualificato,
+materiale_apporto, tipo_gas_protezione, tipo_corrente, apporto_termico,
+posizioni_qualificate, temperatura_preriscaldo, temperatura_interpass_max,
+data_documento, note_rilevanti
 
-Se un campo compare con valori diversi in chunk diversi, usa il valore più completo e segnala la discrepanza in note_rilevanti.
+IMPORTANTE: i campi range_spessore_bw, range_spessore_fw_t1, range_spessore_fw_t2 e
+altezza_gola_fw sono normativamente DISTINTI e NON vanno fusi tra loro né con
+spessore_deposito_saldato. Se un chunk riporta un valore per range_spessore_bw e un
+altro per range_spessore_fw_t1, mantienili come campi separati nel JSON finale — non
+scegliere "il più completo" tra loro, sono dati diversi entrambi da conservare.
+
+Se un campo compare con valori diversi in chunk diversi PER LO STESSO parametro
+(es. due chunk diversi riportano range_spessore_bw diverso), usa il valore più completo
+e segnala la discrepanza in note_rilevanti.
 
 Rispondi SOLO con il JSON finale, nessun testo extra, nessun backtick.
 
@@ -739,11 +786,11 @@ Esegui tutti i check ora, nell'ordine indicato."""
         "appunti": appunti,
         "dettaglio_check": risultati_check,
         # AGGIUNTO 2026-08-02: i digest WPQR grezzi (numero_wpqr, processo,
-        # gruppo_materiale_base, range_spessore_qualificato, materiale_apporto,
-        # posizioni_qualificate, ecc.) venivano usati SOLO per costruire il
-        # prompt di analisi di questo agente e poi scartati — non arrivavano
-        # mai al file JSON salvato su disco. Il Supervisor (cross-check #2,
-        # WPQR vs scope EN 15085) legge questo JSON e non aveva quindi accesso
+        # gruppo_materiale_base, spessori, materiale_apporto, posizioni
+        # qualificate, ecc.) venivano usati SOLO per costruire il prompt di
+        # analisi di questo agente e poi scartati — non arrivavano mai al
+        # file JSON salvato su disco. Il Supervisor (cross-check #2, WPQR
+        # vs scope EN 15085) legge questo JSON e non aveva quindi accesso
         # ai dati tecnici necessari al confronto, anche quando l'estrazione
         # OCR/testo era corretta (bug rilevato: SUP2-01/02/03, sessione IWE
         # 2026-08-02 — confermato che i dati erano correttamente leggibili
@@ -836,7 +883,7 @@ if __name__ == "__main__":
         stampa_report(report)
 
         # Salva il report JSON
-        output_json = r"C:\Users\angma\Desktop\weldaim\report_agents\report_agent1.json"
+        output_json = str(BASE_DIR / "report_agents" / "report_agent1.json")
         with open(output_json, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
         print(f"\n  📄 Report JSON salvato: {output_json}")

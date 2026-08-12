@@ -985,13 +985,13 @@ def stampa_report(report: dict):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    PERCORSO_TEST = r"C:\Users\angma\Desktop\weldaim\test_docs"
+    PERCORSO_TEST = str(BASE_DIR / "test_docs")
 
     report = analizza_pfc_en15085(PERCORSO_TEST)
     stampa_report(report)
 
     # Salva report JSON per il supervisore
-    output_json = r"C:\Users\angma\Desktop\weldaim\report_agents\report_agent5.json"
+    output_json = str(BASE_DIR / "report_agents" / "report_agent5.json")
     with open(output_json, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
     print(f"\n[OUTPUT] Report JSON salvato in: {output_json}")

@@ -37,7 +37,7 @@ import anthropic
 from datetime import datetime, date
 from dotenv import load_dotenv
 
-from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache
+from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache, BASE_DIR
 
 load_dotenv()
 
@@ -672,7 +672,7 @@ if __name__ == "__main__":
         report = analizza_qualifiche(wq_digests, doc_riferimento, client=client)
         stampa_report(report)
 
-        output_json = r"C:\Users\angma\Desktop\weldaim\report_agents\report_agent2.json"
+        output_json = str(BASE_DIR / "report_agents" / "report_agent2.json")
         with open(output_json, "w", encoding="utf-8") as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
         print(f"\n📄 Report JSON salvato in: {output_json}")
