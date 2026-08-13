@@ -50,7 +50,8 @@ from utils import (
     analizza_pdf_chunked,
     analizza_testo_chunked,
     trova_file_per_estensione,
-    pulisci_json
+    pulisci_json,
+    BASE_DIR
 )
 
 # ---------------------------------------------------------------------------

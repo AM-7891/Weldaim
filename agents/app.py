@@ -1,5 +1,5 @@
 # =============================================================================
-# app.py — WeldAIM Streamlit UI (Consolidamento UI: bottone unico + semaforo)
+# app.py — WeldAIM Streamlit UI (bottone unico + semaforo + upload documenti)
 #
 # Sostituisce la versione a 6 bottoni separati con un unico flusso:
 # "Analizza Welding Book completo" esegue in sequenza Agente 1→5 + Supervisore
@@ -21,14 +21,27 @@
 # - I risultati restano visibili tra un rerun e l'altro di Streamlit tramite
 #   st.session_state, cosi' non spariscono se l'utente interagisce con un
 #   expander dopo l'esecuzione.
+#
+# NUOVO (sessione 2026-08-13) — Upload documenti utente:
+# - Prima non esisteva un'interfaccia di caricamento: gli agenti leggevano
+#   sempre da test_docs/, cartella locale gitignorata e quindi ASSENTE su
+#   Streamlit Cloud dopo ogni deploy pulito. Questo causava STOP anomali
+#   (assenza documentale interpretata come NC reale) senza che l'utente
+#   avesse caricato nulla.
+# - Aggiunti 12 st.file_uploader, uno per cartella documentale (14_DISEGNI
+#   esclusa: nessun agente la legge oggi). Il click su "Analizza" scrive i
+#   file caricati in test_docs/<cartella>, DOPO aver svuotato la cartella
+#   dai file di un run precedente (vedi pulisci_e_salva_upload) — cosi' un
+#   run non eredita mai documenti di un'analisi precedente e una cartella
+#   lasciata vuota genera correttamente una NC per assenza documentale.
+# - Nessuna modifica al codice dei 5 agenti: tutti leggono gia' da TEST_DIR
+#   o sue sottocartelle note, quindi la pipeline esistente resta identica.
 # =============================================================================
-
 import streamlit as st
 import json
 import os
 import re
 import anthropic
-
 import agent_wps_wpqr as agente1
 import agent_wq as agente2
 import agent_mockup_vt as agente3
@@ -39,6 +52,7 @@ from utils import BASE_DIR
 
 REPORT_DIR = str(BASE_DIR / "report_agents")
 TEST_DIR = str(BASE_DIR / "test_docs")
+
 CARTELLA_MOCKUP = os.path.join(TEST_DIR, "07_MOCKUP")
 CARTELLA_VT = os.path.join(TEST_DIR, "09_VT")
 DATA_PRODUZIONE = None  # best-effort, come da __main__ originale di Agente 3
@@ -46,6 +60,51 @@ DATA_PRODUZIONE = None  # best-effort, come da __main__ originale di Agente 3
 st.set_page_config(page_title="WeldAIM", layout="wide")
 st.title("🔍 WeldAIM — Analisi Welding Book")
 st.caption("Esegue in sequenza i 5 agenti specializzati e il Supervisore, poi mostra il verdetto complessivo.")
+
+# -----------------------------------------------------------------------
+# SPECIFICA UPLOAD — una voce per cartella documentale (2026-08-13)
+# 14_DISEGNI esclusa: nessun agente la legge oggi. Se in futuro un agente
+# la usera', basta aggiungere una voce qui, senza toccare il resto.
+# -----------------------------------------------------------------------
+
+UPLOAD_SPEC = [
+    {"cartella": "01_WPS", "label": "WPS", "estensioni": ["pdf"], "agente": "Agente 1 — WPS/WPQR"},
+    {"cartella": "02_WPQR", "label": "WPQR", "estensioni": ["pdf"], "agente": "Agente 1 — WPS/WPQR"},
+    {"cartella": "04_WELDING_MAP", "label": "Welding Map", "estensioni": ["pdf", "xlsx", "xls", "xlsm"], "agente": "Agente 1 — WPS/WPQR"},
+    {"cartella": "05_CLASS_SALD", "label": "Tavola classificazione giunti", "estensioni": ["pdf"], "agente": "Agente 1 — WPS/WPQR"},
+    {"cartella": "03_WQ", "label": "Qualifiche saldatori (WQ)", "estensioni": ["pdf"], "agente": "Agente 2 — Qualifiche Saldatori"},
+    {"cartella": "07_MOCKUP", "label": "Mock-up", "estensioni": ["pdf"], "agente": "Agente 3 — Mock-up/VT"},
+    {"cartella": "09_VT", "label": "Visual Test (VT)", "estensioni": ["pdf"], "agente": "Agente 3 — Mock-up/VT"},
+    {"cartella": "06_CERT_MATERIALE_APPORTO_GAS", "label": "Certificati materiale d'apporto e gas", "estensioni": ["pdf"], "agente": "Agente 4 — Certificati Materiali"},
+    {"cartella": "08_CERT_MATERIALE_BASE_TIPO 3.1", "label": "Certificati materiale base 3.1", "estensioni": ["pdf", "xlsx", "xls", "xlsm"], "agente": "Agente 4 — Certificati Materiali"},
+    {"cartella": "11_PFC", "label": "PFC", "estensioni": ["pdf", "xlsx", "xls", "xlsm"], "agente": "Agente 5 — PFC/EN15085/Attrezzature"},
+    {"cartella": "12_CERT_EN15085", "label": "Certificato EN 15085", "estensioni": ["pdf"], "agente": "Agente 5 — PFC/EN15085/Attrezzature"},
+    {"cartella": "13_REPORT_SALDATRICI", "label": "Report saldatrici/attrezzature", "estensioni": ["pdf", "xlsx", "xls", "xlsm"], "agente": "Agente 5 — PFC/EN15085/Attrezzature"},
+]
+
+
+def pulisci_e_salva_upload(cartella_path: str, file_caricati) -> int:
+    """
+    Prepara una cartella di test_docs/ per il run corrente:
+    1) crea la cartella se non esiste — necessario su Streamlit Cloud, dove
+       test_docs/ e' gitignorata e quindi assente dopo ogni deploy pulito;
+    2) rimuove tutti i file gia' presenti al suo interno (non le eventuali
+       sottocartelle) cosi' un run non eredita mai documenti di un'analisi
+       precedente;
+    3) scrive su disco i file caricati in questo run, con lo stesso nome
+       con cui sono stati caricati.
+    Ritorna il numero di file scritti (usato solo per il riepilogo a schermo).
+    """
+    os.makedirs(cartella_path, exist_ok=True)
+    for nome_esistente in os.listdir(cartella_path):
+        percorso_esistente = os.path.join(cartella_path, nome_esistente)
+        if os.path.isfile(percorso_esistente):
+            os.remove(percorso_esistente)
+    for file_caricato in (file_caricati or []):
+        percorso_dest = os.path.join(cartella_path, file_caricato.name)
+        with open(percorso_dest, "wb") as f_out:
+            f_out.write(file_caricato.getbuffer())
+    return len(file_caricati or [])
 
 
 # -----------------------------------------------------------------------
@@ -125,12 +184,52 @@ def mostra_semaforo(etichetta: str, esito: str, dettaglio: str = ""):
 
 
 # -----------------------------------------------------------------------
+# CARICAMENTO DOCUMENTI — un uploader per cartella (2026-08-13)
+# I file caricati qui restano nei widget (stato gestito da Streamlit) e
+# vengono scritti su disco in test_docs/<cartella> SOLO al momento del
+# click su "Analizza" — vedi pulisci_e_salva_upload piu' sotto.
+# -----------------------------------------------------------------------
+
+st.subheader("📂 Carica i documenti del Welding Book")
+st.caption(
+    "Un caricamento per categoria di documento. Una categoria lasciata vuota "
+    "genera una non conformita' per assenza documentale, secondo la stessa "
+    "logica gia' applicata dagli agenti."
+)
+
+file_caricati_per_cartella = {}
+agente_corrente = None
+for spec in UPLOAD_SPEC:
+    if spec["agente"] != agente_corrente:
+        agente_corrente = spec["agente"]
+        st.markdown(f"**{agente_corrente}**")
+    file_caricati_per_cartella[spec["cartella"]] = st.file_uploader(
+        spec["label"],
+        type=spec["estensioni"],
+        accept_multiple_files=True,
+        key=f"upload_{spec['cartella']}",
+    )
+
+st.divider()
+
+# -----------------------------------------------------------------------
 # ESECUZIONE — bottone unico
 # -----------------------------------------------------------------------
 
 avvia = st.button("🚀 Analizza Welding Book completo", type="primary")
 
 if avvia:
+
+    # -------------------------------------------------------------------
+    # Scrittura upload su disco — DEVE avvenire prima di lanciare gli
+    # agenti: sovrascrive ogni cartella test_docs/<cartella> con solo i
+    # file caricati in QUESTO run (vedi pulisci_e_salva_upload).
+    # -------------------------------------------------------------------
+    for spec in UPLOAD_SPEC:
+        pulisci_e_salva_upload(
+            os.path.join(TEST_DIR, spec["cartella"]),
+            file_caricati_per_cartella[spec["cartella"]],
+        )
 
     progress = st.progress(0, text="Avvio analisi...")
     client = anthropic.Anthropic()

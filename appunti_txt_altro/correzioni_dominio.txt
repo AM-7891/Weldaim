@@ -355,7 +355,7 @@ range dichiarato vs materiale provino) è stata estesa da caso singolo (S355=1.2
 
 #042 | 2026-08-12 | Infrastruttura | Aggiunto rilevamento sistema operativo (platform.system()) in utils.py per POPPLER_PATH e tesseract_cmd: su Windows restano percorsi espliciti invariati (verificato: comportamento identico pre/post fix), su Linux (Streamlit Community Cloud) diventano None/non impostati, lasciando che pdf2image e pytesseract li trovino da soli nel PATH di sistema. Creato packages.txt nella radice del progetto (poppler-utils, tesseract-ocr, tesseract-ocr-ita) per l'installazione automatica dei pacchetti di sistema Linux al deploy. Non testabile end-to-end in locale (ramo Linux si attiva solo su Streamlit Cloud). | Claude+Angelo IWE
 
-
+#043 | 2026-08-12 | Infrastruttura | Deploy su Streamlit Community Cloud completato (app raggiungibile su URL pubblico). Aggiunti requirements.txt e fix creazione automatica cartella report_agents in utils.py. NOTA CORRETTIVA (13/08): il "GO, chiamata API funzionante" riportato qui era un FALSO POSITIVO — i Secrets erano ancora al placeholder di default (mai configurati), quindi il GO derivava da zero documenti processati, non da una chiamata API reale riuscita. I Secrets sono stati configurati correttamente solo nella sessione del 12/8 pomeriggio, validazione con chiamata API reale ancora da completare. Nota aperta: Agente 4 e 5 restituiscono STOP invece di un avviso quando test_docs/ e' assente — risolto il 13/08 con upload UI (12 st.file_uploader, uno per cartella). | Claude+Angelo IWE
 
 
 
