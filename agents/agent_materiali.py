@@ -39,6 +39,15 @@ Aggiornamento 2026-07-26:
   tool) se la cartella contiene entrambi i tipi di certificato — costo trascurabile alla
   scala attuale, da rivedere se la cartella crescerà molto (possibile ottimizzazione
   futura: estrazione unica condivisa tra i due tool).
+
+Aggiornamento 2026-08-13:
+- Aggiunto temperature=TEMPERATURA_VERDETTO (importata da utils.py, valore 0) alle 4
+  chiamate client.messages.create() di questo file: dentro check_materiale_base,
+  check_materiale_apporto, check_gas_protezione, check_scadenza_apporto. PROBLEMA:
+  tutte e 4 generano verdetti (STOP/ATTENZIONE/APPUNTO) ma giravano a temperature di
+  default (1.0) — non deterministiche tra run identici (locale vs Streamlit Cloud).
+  Nessuna modifica ai prompt, alle regole di dominio o ai calcoli deterministici Python
+  già presenti (_calcola_confronto_excel, _calcola_scadenza_joincert, _calcola_verdetto).
 """
 
 import os
@@ -54,6 +63,7 @@ from utils import (
     trova_file_per_estensione,
     pulisci_json,
     BASE_DIR,
+    TEMPERATURA_VERDETTO,
 )
 
 load_dotenv()
@@ -479,6 +489,11 @@ Rispondi ESCLUSIVAMENTE in JSON valido, senza backtick, senza testo prima o dopo
     risposta = client.messages.create(
         model=MODEL,
         max_tokens=4096,
+        # TEMPERATURE=0 (2026-08-13): questa chiamata genera i verdetti
+        # STOP/ATTENZIONE/APPUNTO sui certificati materiale base. Deve
+        # essere deterministica tra run identici (locale vs Streamlit
+        # Cloud) - vedi nota changelog in testa al file.
+        temperature=TEMPERATURA_VERDETTO,
         messages=[{"role": "user", "content": prompt}]
     )
 
@@ -671,6 +686,11 @@ Rispondi ESCLUSIVAMENTE in JSON valido, senza backtick, senza testo prima o dopo
     risposta = client.messages.create(
         model=MODEL,
         max_tokens=4096,
+        # TEMPERATURE=0 (2026-08-13): questa chiamata genera i verdetti
+        # STOP/ATTENZIONE/APPUNTO sul materiale d'apporto (3.1/2.2/Joincert).
+        # Deve essere deterministica tra run identici (locale vs Streamlit
+        # Cloud) - vedi nota changelog in testa al file.
+        temperature=TEMPERATURA_VERDETTO,
         messages=[{"role": "user", "content": prompt}]
     )
 
@@ -779,6 +799,11 @@ Rispondi ESCLUSIVAMENTE in JSON valido, senza backtick, senza testo prima o dopo
     risposta = client.messages.create(
         model=MODEL,
         max_tokens=800,
+        # TEMPERATURE=0 (2026-08-13): questa chiamata genera l'esito sul
+        # certificato gas di protezione. Deve essere deterministica tra run
+        # identici (locale vs Streamlit Cloud) - vedi nota changelog in
+        # testa al file.
+        temperature=TEMPERATURA_VERDETTO,
         messages=[{"role": "user", "content": prompt}]
     )
 
@@ -863,6 +888,11 @@ Rispondi ESCLUSIVAMENTE in JSON valido, senza backtick, senza testo prima o dopo
     risposta = client.messages.create(
         model=MODEL,
         max_tokens=600,
+        # TEMPERATURE=0 (2026-08-13): questa chiamata genera il verdetto
+        # sull'evidenza di acquisto ante-scadenza del Joincert. Deve essere
+        # deterministica tra run identici (locale vs Streamlit Cloud) -
+        # vedi nota changelog in testa al file.
+        temperature=TEMPERATURA_VERDETTO,
         messages=[{"role": "user", "content": prompt}]
     )
 

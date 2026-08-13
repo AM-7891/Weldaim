@@ -30,6 +30,19 @@
 # 2026-07-26 per diagnosticare TCHUNK-01 (stampa a console del digest
 # completo di ogni WQ). La diagnosi e' conclusa, il blocco non serve piu' e
 # appesantiva l'output console durante i test end-to-end della UI.
+#
+# NOTA (2026-08-13 — TEMPERATURE=0 SU CHIAMATA VERDETTO-GENERANTE):
+# Aggiunto temperature=TEMPERATURA_VERDETTO (importata da utils.py, valore
+# 0) alla chiamata client.messages.create() dentro il loop agentico
+# analizza_qualifiche (while iterazione < MAX_ITER). PROBLEMA: questa
+# chiamata genera i verdetti (OK/ATTENZIONE/NC_STOP per ogni saldatore,
+# poi aggregati nel semaforo globale) tramite tool_use, ma girava a
+# temperature di default (1.0) — non deterministica tra run identici
+# (locale vs Streamlit Cloud). TEMPERATURA_ESTRAZIONE (usata dentro
+# utils.py per l'estrazione digest WQ via analizza_pdf_chunked) non era
+# il problema — quella era gia' corretta. Il problema era specificamente
+# questa chiamata, che genera il verdetto finale e non passava alcun
+# parametro temperature.
 
 import os
 import json
@@ -37,7 +50,7 @@ import anthropic
 from datetime import datetime, date
 from dotenv import load_dotenv
 
-from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache, BASE_DIR
+from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache, BASE_DIR, TEMPERATURA_VERDETTO
 
 load_dotenv()
 
@@ -554,6 +567,12 @@ che aggreghi TUTTI i saldatori analizzati."""
             model=MODEL,
             max_tokens=8096,
             system=SYSTEM_PROMPT,
+            # TEMPERATURE=0 (2026-08-13): questa chiamata genera i verdetti
+            # (OK/ATTENZIONE/NC_STOP per saldatore, poi il semaforo globale)
+            # tramite tool_use. Deve essere deterministica tra run identici
+            # (locale vs Streamlit Cloud) - vedi nota changelog in testa al
+            # file per il problema che risolve.
+            temperature=TEMPERATURA_VERDETTO,
             # PROMPT CACHING (2026-07-29/30): cache automatica a livello di
             # richiesta. MAX_ITER=30 - con piu' saldatori il loop puo' girare
             # molte volte nella stessa run, ognuna rimandando l'intera

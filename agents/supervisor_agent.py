@@ -51,13 +51,23 @@ materiale esplicite (ISO 15614-1 Tabella 5 per acciai gruppi 1/2/3, ISO
 note). Le mappe sono fornite come testo autorevole nel prompt (opzione A -
 veloce); refactor a override Python deterministico (opzione B) rimandato
 a sessione dedicata, vedi roadmap.
+
+NOTA (2026-08-13): aggiunto temperature=TEMPERATURA_VERDETTO (importata da
+utils.py, valore 0) all'unica chiamata client.messages.create() di questo
+file, dentro chiama_claude_json() — funzione centralizzata usata da tutti
+e 5 i cross-check (#1-#5). PROBLEMA: questa chiamata genera i verdetti
+(STOP/ATTENZIONE/APPUNTO) di ogni cross-check ma girava a temperature di
+default (1.0) — non deterministica tra run identici (locale vs Streamlit
+Cloud); confermato su Streamlit Cloud con SUP3-02 comparso solo in cloud.
+Nessuna modifica ai prompt PROMPT_CHECK1...5 ne' alla logica di
+aggregazione in aggrega_supervisor.
 """
 
 import os
 import json
 import anthropic
 
-from utils import pulisci_json, BASE_DIR  # riusa la utility gia' validata negli altri agenti
+from utils import pulisci_json, BASE_DIR, TEMPERATURA_VERDETTO  # riusa la utility gia' validata negli altri agenti
 
 # ---------------------------------------------------------------------------
 # CONFIGURAZIONE GLOBALE
@@ -114,6 +124,12 @@ def chiama_claude_json(client, model, prompt, max_tokens=3000, codice_check="SUP
     risposta = client.messages.create(
         model=model,
         max_tokens=max_tokens,
+        # TEMPERATURE=0 (2026-08-13): questa chiamata genera i verdetti di
+        # TUTTI i cross-check del Supervisor (STOP/ATTENZIONE/APPUNTO), dato
+        # che tutte le funzioni check_* passano da qui. Deve essere
+        # deterministica tra run identici (locale vs Streamlit Cloud) - vedi
+        # nota changelog in testa al file.
+        temperature=TEMPERATURA_VERDETTO,
         messages=[{"role": "user", "content": prompt}]
     )
     testo_pulito = pulisci_json(risposta.content[0].text)
@@ -830,7 +846,7 @@ Controllo B:
   serve tracciare le due sezioni come requisiti formali indipendenti.
 
   L'UNICO elemento realmente rilevante da segnalare su questo documento
-  e' CHI LO HA EMESSO: se il certificato e' emesso da un DISTRIBUTORE
+  E' CHI LO HA EMESSO: se il certificato e' emesso da un DISTRIBUTORE
   anziche' dal PRODUTTORE/fabbricante, questo genera UN SOLO alert
   -> NC ATTENZIONE (non STOP): e' un caso particolare che si discosta
   dalla prassi normale (emissione diretta dal produttore) e merita

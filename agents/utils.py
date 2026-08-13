@@ -57,6 +57,22 @@ Aggiornamento 2026-08-12:
   Prerequisito: file packages.txt nella radice del progetto (weldaim\\, non agents\\)
   con poppler-utils, tesseract-ocr, tesseract-ocr-ita — installati in automatico da
   Streamlit Cloud al deploy. Nessun impatto sul comportamento Windows, verificato.
+
+Aggiornamento 2026-08-13:
+- Aggiunta costante TEMPERATURA_VERDETTO = 0, gemella di TEMPERATURA_ESTRAZIONE.
+  PROBLEMA: TEMPERATURA_ESTRAZIONE era usata solo nelle funzioni di estrazione di
+  questo file (analizza_testo_chunked, analizza_pdf_chunked, _aggrega_risultati),
+  ma le 12 chiamate client.messages.create() che generano i VERDETTI dentro i 6
+  file agente (agent_materiali.py, agent_mockup_vt.py, agent_pfc_en15085.py,
+  agent_wps_wpqr.py, agent_wq.py, supervisor_agent.py) non passavano alcun
+  parametro temperature, quindi giravano al default API (1.0) — non deterministico.
+  Confermato su Streamlit Cloud: stesso set documenti, run locale vs cloud,
+  Agente 1 GO->ATTENZIONE, NC totali 11 vs 16, SUP3-02 comparso solo in cloud.
+  SOLUZIONE: costante dedicata TEMPERATURA_VERDETTO, valore identico a
+  TEMPERATURA_ESTRAZIONE (0) ma nome separato per chiarezza semantica — estrazione
+  e generazione verdetto sono fasi concettualmente diverse anche se il parametro
+  usato e' lo stesso. I 6 file agente la importano da qui e la passano nelle loro
+  chiamate client.messages.create() verdetto-generanti.
 """
 
 import os
@@ -110,6 +126,12 @@ CARATTERI_PER_CHUNK = 12000
 # variabilita' di estrazione tra run identici sullo stesso documento (non la elimina
 # in modo garantito, ma la riduce fortemente rispetto al default).
 TEMPERATURA_ESTRAZIONE = 0
+
+# Temperatura fissata a 0 per le chiamate che generano VERDETTI (GO/ATTENZIONE/STOP)
+# nei 6 file agente. Stesso valore di TEMPERATURA_ESTRAZIONE, costante separata per
+# chiarezza semantica: estrazione dati e generazione verdetto sono fasi diverse.
+# Vedi changelog 2026-08-13 in testa a questo file per il problema che risolve.
+TEMPERATURA_VERDETTO = 0
 
 
 # ---------------------------------------------------------------------------

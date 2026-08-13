@@ -37,6 +37,19 @@ Aggiornamento 2026-08-02 — FIX CAUSA RADICE del bug sopra:
   dal fatto che il documento passi per chunking+aggregazione o per analisi
   diretta. _normalizza_nc() resta invariata come rete di sicurezza difensiva,
   non piu' come meccanismo primario.
+
+Aggiornamento 2026-08-13:
+- Aggiunto temperature=TEMPERATURA_VERDETTO (importata da utils.py, valore 0)
+  alle 3 chiamate dirette client.messages.create() di questo file: nel ramo
+  di analisi diretta (documenti corti) di check_welding_map, in check_en15085,
+  in check_saldatrici. check_pfc non necessita di modifica: usa esclusivamente
+  analizza_pdf_chunked/analizza_testo_chunked, che passano gia' da utils.py
+  dove TEMPERATURA_ESTRAZIONE era gia' impostata correttamente.
+  PROBLEMA: le 3 chiamate dirette generano verdetti (STOP/ATTENZIONE/APPUNTO)
+  ma giravano a temperature di default (1.0) — non deterministiche tra run
+  identici (locale vs Streamlit Cloud). Nessuna modifica ai prompt o ai
+  calcoli deterministici Python gia' presenti (_valuta_scadenza_calibratore,
+  _normalizza_nc, _calcola_verdetto).
 """
 
 import os
@@ -51,7 +64,8 @@ from utils import (
     analizza_testo_chunked,
     trova_file_per_estensione,
     pulisci_json,
-    BASE_DIR
+    BASE_DIR,
+    TEMPERATURA_VERDETTO
 )
 
 # ---------------------------------------------------------------------------
@@ -334,6 +348,11 @@ Rispondi ESCLUSIVAMENTE in JSON valido senza backtick:
         risposta = client.messages.create(
             model=MODEL,
             max_tokens=2000,
+            # TEMPERATURE=0 (2026-08-13): questa chiamata genera il verdetto
+            # sulla welding map (ramo analisi diretta, documenti corti). Deve
+            # essere deterministica tra run identici (locale vs Streamlit
+            # Cloud) - vedi nota changelog in testa al file.
+            temperature=TEMPERATURA_VERDETTO,
             messages=[{"role": "user", "content": prompt_diretto}]
         )
         testo_r = pulisci_json(risposta.content[0].text)
@@ -650,6 +669,11 @@ Rispondi ESCLUSIVAMENTE in JSON valido senza backtick:
     risposta = client.messages.create(
         model=MODEL,
         max_tokens=2000,
+        # TEMPERATURE=0 (2026-08-13): questa chiamata genera i verdetti
+        # STOP/ATTENZIONE/APPUNTO sul certificato EN 15085. Deve essere
+        # deterministica tra run identici (locale vs Streamlit Cloud) -
+        # vedi nota changelog in testa al file.
+        temperature=TEMPERATURA_VERDETTO,
         messages=[{"role": "user", "content": prompt}]
     )
     testo_r = pulisci_json(risposta.content[0].text)
@@ -807,6 +831,12 @@ Rispondi ESCLUSIVAMENTE in JSON valido senza backtick:
     risposta = client.messages.create(
         model=MODEL,
         max_tokens=2000,
+        # TEMPERATURE=0 (2026-08-13): questa chiamata genera i verdetti
+        # ATTENZIONE/APPUNTO sui report saldatrici (l'unico STOP possibile,
+        # scadenza calibratore, e' calcolato deterministicamente altrove -
+        # vedi _valuta_scadenza_calibratore). Deve essere deterministica tra
+        # run identici (locale vs Streamlit Cloud) - vedi changelog in testa.
+        temperature=TEMPERATURA_VERDETTO,
         messages=[{"role": "user", "content": prompt}]
     )
     testo_r = pulisci_json(risposta.content[0].text)

@@ -50,6 +50,16 @@
 # confrontare check-by-check con l'ultimo output buono prima di considerare
 # questa versione definitiva.
 # WeldAIM — Sprint E (caching) + fix classificazione VT
+#
+# NOTA (2026-08-13 — TEMPERATURE=0 SU CHIAMATE VERDETTO-GENERANTI):
+# Aggiunto temperature=TEMPERATURA_VERDETTO (importata da utils.py, valore 0)
+# alle 2 chiamate client.messages.create() di questo file: dentro
+# check_mockup() (giudizio complessivo mock-up) e dentro check_visual_test()
+# (classificazione REPORT_VT/DOCUMENTO_SUPPORTO + giudizio complessivo VT).
+# PROBLEMA: entrambe le chiamate generano verdetti ma giravano a temperature
+# di default (1.0) — non deterministiche tra run identici (locale vs
+# Streamlit Cloud). Nessuna modifica ai prompt ISTRUZIONI_FISSE_MOCKUP /
+# ISTRUZIONI_FISSE_VT né alla logica di instradamento supporto/report.
 # =============================================================================
 
 import os
@@ -63,6 +73,7 @@ from utils import (
     _prepara_content_multi_cache,
     _stampa_uso_cache,
     BASE_DIR,
+    TEMPERATURA_VERDETTO,
 )
 
 # Riuso del caricamento WPS/WPQR di Agente 1 — non duplichiamo la pipeline
@@ -652,6 +663,11 @@ Produci ora l'output secondo il formato indicato sopra, per questo specifico rep
         risposta = client.messages.create(
             model=MODEL,
             max_tokens=8000,
+            # TEMPERATURE=0 (2026-08-13): questa chiamata genera il giudizio
+            # complessivo GO/ATTENZIONE/STOP del report mock-up. Deve essere
+            # deterministica tra run identici (locale vs Streamlit Cloud) -
+            # vedi nota changelog in testa al file per il problema che risolve.
+            temperature=TEMPERATURA_VERDETTO,
             messages=[
                 {"role": "user", "content": content}
             ]
@@ -733,6 +749,12 @@ seconda della classificazione), per questo specifico documento.
         risposta = client.messages.create(
             model=MODEL,
             max_tokens=6000,
+            # TEMPERATURE=0 (2026-08-13): questa chiamata classifica il
+            # documento (REPORT_VT vs DOCUMENTO_SUPPORTO) e genera il giudizio
+            # complessivo GO/ATTENZIONE/STOP quando applicabile. Deve essere
+            # deterministica tra run identici (locale vs Streamlit Cloud) -
+            # vedi nota changelog in testa al file per il problema che risolve.
+            temperature=TEMPERATURA_VERDETTO,
             messages=[
                 {"role": "user", "content": content}
             ]

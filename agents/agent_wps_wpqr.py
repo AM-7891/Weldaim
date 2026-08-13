@@ -62,6 +62,19 @@
 # (stessa sessione) - NON ancora applicata al prompt interno di
 # check_corrispondenza_1a1 in questo file, che resta su base testuale
 # generica per ora (task separato, fuori scope di questa modifica).
+#
+# NOTA (2026-08-13 — TEMPERATURE=0 SU CHIAMATA VERDETTO-GENERANTE):
+# Aggiunto temperature=TEMPERATURA_VERDETTO (importata da utils.py, valore
+# 0) alla chiamata client.messages.create() dentro il loop agentico
+# (while True, variabile turno). PROBLEMA: questa chiamata genera i
+# verdetti (GO/ATTENZIONE/STOP) tramite i tool_use, ma girava a
+# temperature di default (1.0) — non deterministica. Confermato su
+# Streamlit Cloud: stesso set documenti, run locale vs cloud, Agente 1
+# spostato da GO ad ATTENZIONE. TEMPERATURA_ESTRAZIONE (usata dentro
+# utils.py per l'estrazione dati WPQR via analizza_pdf_chunked) non era
+# il problema — quella era gia' corretta. Il problema era specificamente
+# questa chiamata, che genera il verdetto finale e non passava alcun
+# parametro temperature.
 
 import os
 import json
@@ -69,7 +82,7 @@ import anthropic
 from datetime import datetime
 from dotenv import load_dotenv
 
-from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache, BASE_DIR
+from utils import estrai_testo_pdf_semplice, analizza_pdf_chunked, _stampa_uso_cache, BASE_DIR, TEMPERATURA_VERDETTO
 
 load_dotenv()
 
@@ -703,6 +716,11 @@ Esegui tutti i check ora, nell'ordine indicato."""
             model=MODEL,
             max_tokens=8192,  # margine di sicurezza - il fix primario e' la
                                # regola di sinteticita' aggiunta ai prompt sopra
+            # TEMPERATURE=0 (2026-08-13): questa chiamata genera i verdetti
+            # (GO/ATTENZIONE/STOP) tramite tool_use. Deve essere deterministica
+            # tra run identici (locale vs Streamlit Cloud) - vedi nota changelog
+            # in testa al file per il problema che risolve.
+            temperature=TEMPERATURA_VERDETTO,
             # PROMPT CACHING (2026-07-29/30): cache automatica a livello di
             # richiesta. Il loop chiama l'API piu' volte per run (una per
             # turno di tool_use): questo campo sposta il breakpoint di cache
