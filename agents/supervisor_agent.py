@@ -61,6 +61,31 @@ default (1.0) — non deterministica tra run identici (locale vs Streamlit
 Cloud); confermato su Streamlit Cloud con SUP3-02 comparso solo in cloud.
 Nessuna modifica ai prompt PROMPT_CHECK1...5 ne' alla logica di
 aggregazione in aggrega_supervisor.
+
+NOTA (2026-08-14, parte 1 - run_supervisor): vedi docstring di
+run_supervisor() piu' sotto per il fix di contaminazione tra run (il
+Supervisore ora riceve i report gia' in memoria da app.py invece di
+rileggerli sempre da disco).
+
+NOTA (2026-08-14, parte 2 - PROMPT_CHECK3): dopo il fix precedente,
+riscontrata con test isolato a input identico (due chiamate consecutive a
+check_spessore_materiale() con report1/3/4 congelati su disco, nessuna
+nuova estrazione) un'instabilita' distinta: a parita' di dati in ingresso,
+il modello a volte segnalava e a volte ometteva la non conformita' relativa
+a uno scarto tra spessore nominale dichiarato nel mock-up e la misura
+macrografica dello stesso campione (11,97mm misurato vs 15mm nominale
+dichiarato, scarto ~20%, gia' confermato tecnicamente fondato da IWE).
+CAUSA: PROMPT_CHECK3 non conteneva alcuna istruzione esplicita su questo
+confronto specifico (spessore dichiarato vs misura macrografica nello
+STESSO report mock-up) - il modello lo notava solo di propria iniziativa
+leggendo il JSON grezzo di Agent 3, non per istruzione, quindi il
+comportamento non era garantito run dopo run. SOLUZIONE (confermata da
+IWE): aggiunto un terzo punto di controllo esplicito e un VINCOLO NON
+DEROGABILE - scarto >10% del nominale, senza nota di taglio/sezionamento
+del campione che lo giustifichi, -> sempre e solo STOP. Sotto quella
+soglia, o in presenza di nota di taglio, resta a giudizio qualitativo
+(nessuna soglia numerica ulteriore, su richiesta esplicita IWE). Stesso
+pattern gia' usato per la Condizione B non derogabile di check_copertura_wq.
 """
 
 import os
@@ -538,6 +563,13 @@ ESEGUI QUESTO CONTROLLO:
 2. SPESSORE: lo spessore dichiarato nel mock-up rientra nel range
    qualificato dal WPS ed e' attestato da un certificato materiale
    corrispondente (stesso spessore o spessore compatibile)?
+3. COERENZA SPESSORE DICHIARATO vs MISURA MACROGRAFICA: se il report
+   mock-up (Agent 3) riporta sia uno spessore nominale dichiarato (es. in
+   testa al report, campo tipo "T1"/"T2") SIA una o piu' misure
+   macrografiche dello stesso lembo/campione, confronta i due valori.
+   Questo e' un controllo DISTINTO dal punto 2 sopra (che confronta lo
+   spessore dichiarato con WPS e certificato) - qui confronti lo spessore
+   dichiarato con la misura fisica riportata nello STESSO report mock-up.
 
 REGOLE DI SEVERITA':
 - Grado materiale o spessore NON coerente tra i tre documenti (mismatch
@@ -546,6 +578,27 @@ REGOLE DI SEVERITA':
 - Nessun certificato disponibile per il grado/spessore dichiarato ->
   NC STOP (coerente con severita' zero-tolerance gia' applicata da Agent 4
   per assenza di certificato).
+
+  VINCOLO NON DEROGABILE SULLO SCARTO MACROGRAFICO (aggiunto 2026-08-14,
+  dopo diagnosi IWE su instabilita' di segnalazione confermata con test
+  isolato a input identico - vedi correzioni_dominio.txt): se lo scarto
+  tra lo spessore nominale dichiarato nel report mock-up e la misura
+  macrografica dello stesso campione supera il 10% del nominale, E il
+  report NON riporta alcuna nota esplicativa che il campione e' stato
+  tagliato/sezionato/inglobato in modo da giustificare la riduzione di
+  spessore misurata (es. "tagliato", "sezione ridotta per taglio",
+  "campione inglobato"), la severita' e' SEMPRE E SOLO STOP, senza
+  eccezioni discrezionali al ribasso - anche se grado materiale e
+  copertura WPS/certificato risultano altrimenti coerenti. Prima di
+  scrivere la severita' finale per questo controllo quando lo scarto
+  supera il 10% e non c'e' nota di taglio, rileggi questa regola: se stai
+  per scrivere ATTENZIONE o APPUNTO, fermati e correggi in STOP.
+  Se lo scarto e' pari o inferiore al 10%, oppure e' presente una nota di
+  taglio/sezionamento che lo giustifica, valuta la severita' con giudizio
+  qualitativo secondo le regole generali di questo prompt (nessun
+  automatismo in questi casi - usa il tuo giudizio su quanto lo
+  scostamento sia plausibile e giustificato dal contesto).
+
 - Certificato presente ma con lieve scostamento dimensionale plausibile
   (es. tolleranza di laminazione) -> NC ATTENZIONE.
 - Dato mancante in uno dei tre report (non un mismatch, un'assenza) ->
@@ -566,6 +619,8 @@ Rispondi SOLO in JSON con questa struttura, nessun testo fuori dal JSON:
       "grado_materiale_coerente": true/false/null,
       "spessore_coerente": true/false/null,
       "certificato_disponibile": true/false,
+      "spessore_macrografia_coerente": true/false/null,
+      "scarto_macrografico_percentuale": 0.0,
       "note": "spiegazione sintetica"
     }}
   ],
@@ -581,6 +636,15 @@ Rispondi SOLO in JSON con questa struttura, nessun testo fuori dal JSON:
   ],
   "esito": "GO" | "ATTENZIONE" | "STOP"
 }}
+
+NOTA SUL CAMPO "spessore_macrografia_coerente" e "scarto_macrografico_percentuale":
+valorizzali null se il report mock-up non riporta misure macrografiche
+confrontabili con lo spessore nominale dichiarato. Altrimenti,
+"scarto_macrografico_percentuale" e' il valore assoluto dello scarto
+percentuale calcolato (|nominale - misurato| / nominale * 100), e
+"spessore_macrografia_coerente" e' false se quello scarto supera il 10%
+senza nota di taglio/sezionamento che lo giustifichi (vedi VINCOLO NON
+DEROGABILE sopra), true altrimenti.
 """
 
 
