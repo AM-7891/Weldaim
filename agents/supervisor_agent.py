@@ -1000,18 +1000,44 @@ def aggrega_supervisor(risultati_check):
 # ORCHESTRATORE PRINCIPALE
 # ---------------------------------------------------------------------------
 
-def run_supervisor(client, model=MODEL):
+def run_supervisor(client, model=MODEL, report1=None, report2=None, report3=None,
+                    report4=None, report5=None):
     """
-    Carica tutti i report disponibili, esegue i cross-check per cui ha
-    i dati necessari (saltando quelli non ancora disponibili) e aggrega
-    tutto in un report finale.
+    Esegue i cross-check per cui ha i dati necessari (saltando quelli non
+    disponibili) e aggrega tutto in un report finale.
+
+    FIX 2026-08-14 (contaminazione tra run tramite file system): questa
+    funzione ora accetta report1..report5 come parametri opzionali.
+
+    - Se il chiamante li passa (caso normale: app.py, dopo aver eseguito
+      i 5 agenti nella stessa run), questi hanno PRECEDENZA ASSOLUTA e
+      NESSUN file viene letto da report_agents/. Questo elimina alla
+      radice il bug diagnosticato il 14/08/2026: prima, run_supervisor()
+      rileggeva SEMPRE i report da disco tramite carica_report(); se un
+      agente falliva a meta' di una run (eccezione, timeout, errore 529),
+      il suo report_agentN.json non veniva riscritto e restava quello di
+      una run PRECEDENTE, che il Supervisore consumava senza saperlo -
+      mischiando dati freschi e stantii tra loro. Questo spiegava lo
+      scostamento osservato tra run identici anche dopo il fix
+      temperature=0 (11 NC -> 19 NC): non era non-determinismo del
+      modello, era stato non pulito sul file system.
+    - Se un parametro non viene passato (resta None, valore di default),
+      si ricade sulla lettura da disco via carica_report() - preserva il
+      comportamento originale per l'esecuzione diretta da riga di comando
+      (blocco __main__ sotto) e per eventuali script di test dedicati che
+      chiamano run_supervisor(client) senza passare i report.
     """
-    print("Caricamento report agenti disponibili...")
-    report1 = carica_report("agent1")
-    report2 = carica_report("agent2")
-    report3 = carica_report("agent3")
-    report4 = carica_report("agent4")
-    report5 = carica_report("agent5")
+    print("Caricamento report agenti...")
+    if report1 is None:
+        report1 = carica_report("agent1")
+    if report2 is None:
+        report2 = carica_report("agent2")
+    if report3 is None:
+        report3 = carica_report("agent3")
+    if report4 is None:
+        report4 = carica_report("agent4")
+    if report5 is None:
+        report5 = carica_report("agent5")
 
     print("\nEsecuzione cross-check...")
     risultati = [

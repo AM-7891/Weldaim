@@ -107,6 +107,35 @@ def pulisci_e_salva_upload(cartella_path: str, file_caricati) -> int:
     return len(file_caricati or [])
 
 
+def pulisci_report_precedenti():
+    """
+    Cancella tutti i report_agentX.json e report_supervisor.json rimasti da
+    un run precedente, PRIMA di avviare una nuova analisi.
+
+    Diagnosi 2026-08-14: run_supervisor() rileggeva SEMPRE i report da disco;
+    se un agente falliva a meta' run (eccezione, timeout, errore 529), il suo
+    JSON non veniva riscritto e restava quello di una run precedente, che il
+    Supervisore consumava senza saperlo — mischiando dati freschi e stantii.
+    Questo e', con ogni evidenza, la causa reale dello scostamento osservato
+    anche dopo il fix temperature=0 (11 NC -> 19 NC).
+
+    FIX PRIMARIO: run_supervisor() ora riceve i report gia' in memoria da
+    questo file (vedi chiamata piu' sotto), quindi non dipende piu' dal
+    contenuto di questa cartella per la sua correttezza. Questa funzione
+    resta comunque utile come rete di sicurezza aggiuntiva — mantiene
+    report_agents/ coerente con l'ultimo run per chi apre i JSON a mano o
+    per l'esecuzione diretta di un singolo agente da riga di comando — ma
+    non e' piu' il meccanismo che garantisce risultati corretti nella UI.
+    """
+    if not os.path.isdir(REPORT_DIR):
+        return
+    for nome_file in ["report_agent1.json", "report_agent2.json", "report_agent3.json",
+                       "report_agent4.json", "report_agent5.json", "report_supervisor.json"]:
+        percorso = os.path.join(REPORT_DIR, nome_file)
+        if os.path.isfile(percorso):
+            os.remove(percorso)
+
+
 # -----------------------------------------------------------------------
 # UTILITY — estrazione esito e visualizzazione semaforo
 # -----------------------------------------------------------------------
@@ -219,6 +248,11 @@ st.divider()
 avvia = st.button("🚀 Analizza Welding Book completo", type="primary")
 
 if avvia:
+
+    # Azzera i report della run precedente — vedi pulisci_report_precedenti()
+    # sopra per il perche'. Prima riga in assoluto del blocco, prima ancora
+    # della scrittura degli upload.
+    pulisci_report_precedenti()
 
     # -------------------------------------------------------------------
     # Scrittura upload su disco — DEVE avvenire prima di lanciare gli
@@ -345,11 +379,22 @@ if avvia:
         errori.append(f"Agente 5: errore — {e}")
 
     # ---------------------------------------------------------------
-    # SUPERVISORE — cross-check finali su tutti i report salvati su disco
+    # SUPERVISORE — cross-check finali sui report GIA' IN MEMORIA di
+    # questa run (fix 2026-08-14: prima rileggeva sempre da disco tramite
+    # carica_report(), esponendosi a dati stantii di run precedenti in
+    # caso di fallimento parziale di un agente — vedi nota in
+    # pulisci_report_precedenti() sopra e docstring di run_supervisor()
+    # in supervisor_agent.py). Un reportN rimasto None (agente fallito in
+    # questa run) fa saltare correttamente solo i cross-check che lo
+    # richiedono, esattamente come gia' gestito da ogni funzione check_*.
     # ---------------------------------------------------------------
     progress.progress(90, text="Supervisore — cross-check finali...")
     try:
-        report_sup = supervisore.run_supervisor(client)
+        report_sup = supervisore.run_supervisor(
+            client,
+            report1=report1, report2=report2, report3=report3,
+            report4=report4, report5=report5,
+        )
         with open(os.path.join(REPORT_DIR, "report_supervisor.json"), "w", encoding="utf-8") as f:
             json.dump(report_sup, f, ensure_ascii=False, indent=2)
     except Exception as e:
