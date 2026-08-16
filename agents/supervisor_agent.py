@@ -237,6 +237,17 @@ REGOLE DI SEVERITA':
 - Tutte le variabili essenziali verificabili sono coerenti -> nessuna non
   conformita' per quel mock-up.
 
+REGOLA DI GRANULARITA' - NON DEROGABILE:
+Se per uno stesso mock-up emergono piu' aspetti problematici relativi al tipo
+di giunto (es. conflitto interno tra sotto-documenti dello stesso mock-up E
+mismatch tra giunto realizzato e giunto qualificato dalla WPS), NON generare
+NC separate per ciascun aspetto. Accorpa TUTTI gli aspetti relativi
+all'ambiguita' sul tipo di giunto di un singolo mock-up in UNA SOLA non
+conformita', descrivendo nel campo "descrizione" ogni aspetto rilevato
+(conflitto documentale interno, mismatch con WPS, ecc.) in modo sequenziale
+all'interno dello stesso testo. Una non conformita' per mock-up per il tema
+"tipo di giunto", mai piu' di una.
+
 Per ogni non conformita' rilevata, se emerge un conflitto diretto tra
 affermazioni dei due report, aggiungi "conflitto_documentale": true e
 specifica in "contesto_conflitto" quali documenti e quali valori sono in

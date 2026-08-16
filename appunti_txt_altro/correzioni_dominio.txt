@@ -357,6 +357,24 @@ range dichiarato vs materiale provino) è stata estesa da caso singolo (S355=1.2
 
 #043 | 2026-08-12 | Infrastruttura | Deploy su Streamlit Community Cloud completato (app raggiungibile su URL pubblico). Aggiunti requirements.txt e fix creazione automatica cartella report_agents in utils.py. NOTA CORRETTIVA (13/08): il "GO, chiamata API funzionante" riportato qui era un FALSO POSITIVO — i Secrets erano ancora al placeholder di default (mai configurati), quindi il GO derivava da zero documenti processati, non da una chiamata API reale riuscita. I Secrets sono stati configurati correttamente solo nella sessione del 12/8 pomeriggio, validazione con chiamata API reale ancora da completare. Nota aperta: Agente 4 e 5 restituiscono STOP invece di un avviso quando test_docs/ e' assente — risolto il 13/08 con upload UI (12 st.file_uploader, uno per cartella). | Claude+Angelo IWE
 
+#044 | 2026-08-16 / Supervisore-CHECK1 / non-determinismo granularità NC (1 vs 2 per mock-up su ambiguità giunto) / aggiunta regola non-derogabile "una NC per mock-up per tema tipo di giunto" in PROMPT_CHECK1 / severità STOP confermata da Angelo IWE (mismatch HY vs BW-SS-MB = variabile essenziale fuori range, non ambiguità documentale) / Angelo IWE
+
+#045 | 2026-08-16 / Supervisore-CHECK1 (check_wps_vs_mockup) / non-determinismo granularità NC: stesso contenuto sostanziale (conflitto interno mock-up + mismatch giunto vs WPS) riportato a volte come 1 NC per mock-up, a volte come 2 NC separate / aggiunta REGOLA DI GRANULARITA' non derogabile in PROMPT_CHECK1: una sola NC per mock-up per il tema "tipo di giunto", accorpando tutti gli aspetti nella descrizione / severità STOP confermata da Angelo IWE (mismatch HY vs BW-SS-MB = variabile essenziale fuori range, non ambiguità documentale) / test_supervisor_check1_determinismo.py: 0/2 differenze dopo il fix / Angelo IWE
+
+#046 | 2026-08-16 / Supervisore-CHECK2 (check_wpqr_vs_en15085) / blind-testing determinismo, nessun problema riscontrato / nessuna modifica al prompt necessaria — 4/4 WPQR e 3/3 NC identici su 2 run con input congelato / conferma stabilità mappe di copertura gruppo materiale introdotte il 10/8 / test_supervisor_check2_determinismo.py: 0 differenze / Angelo IWE
+
+#047 | 2026-08-16 / Supervisore-CHECK4 (check_copertura_wq) / blind-testing determinismo, nessun problema riscontrato / nessuna modifica al prompt necessaria — contatori saldatori, compatibilità WQ/WPS e 1/1 NC identici su 2 run / conferma stabilità vincolo non derogabile soglia STOP Condizione B introdotto il 2/8 / test_supervisor_check4_determinismo.py: 0 differenze / Angelo IWE
+
+#048 | 2026-08-16 / Supervisore-CHECK5 (check_materiale_apporto) / blind-testing determinismo, nessun problema riscontrato — SPRINT BLIND-TESTING SUPERVISORE COMPLETATO (5/5 cross-check confermati deterministici) / nessuna modifica al prompt necessaria — 2/2 NC identiche su 2 run, controllo A e B stabili / conferma stabilità vincolo non derogabile Joincert scaduto introdotto il 30/7 / test_supervisor_check5_determinismo.py: 0 differenze / Angelo IWE
+
+#049 | 2026-08-16 / Supervisore-CHECK1 (check_wps_vs_mockup) / non-determinismo intermittente rilevato: su input con giunto_coerente=true, il modello a volte genera comunque un APPUNTO su ambiguità residua del tipo di giunto, a volte no (osservato 1 volta su 4 chiamate nella giornata) / NON RISOLTO, priorità bassa - impatto nullo sul verdetto finale quando coesistono NC di livello STOP da altri check / nessuna modifica al prompt applicata / test_supervisor_check1_determinismo.py (post-fix bug confronto esito) ha reso visibile il fenomeno / Angelo IWE
+
+#050 | 2026-08-16 / Supervisore-CHECK2 (check_wpqr_vs_en15085) / non-determinismo intermittente su granularità NC APPUNTO (range dimensionale FW non verificabile): tentata regola di accorpamento non derogabile nel prompt, non ha eliminato la variabilità (9 vs 10 NC tra run, stessa causa di fondo di CHECK1) / NON RISOLTO, priorità bassa - le 5 NC ATTENZIONE (incoerenza gruppo materiale) restano perfettamente stabili, l'esito finale del check non cambia mai (sempre ATTENZIONE) indipendentemente da questa variabilità di conteggio APPUNTO / nessuna ulteriore modifica al prompt applicata, non vale il tempo investito visto impatto nullo sul verdetto / Angelo IWE
+
+
+
+
+
 
 
 
