@@ -30,8 +30,11 @@ in agents/, e si aspetta di essere lanciato da li').
 """
 
 import os
+import sys
 import json
 import anthropic
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'agents'))
 
 from supervisor_agent import (
     carica_report,

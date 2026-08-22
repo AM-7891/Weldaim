@@ -45,7 +45,10 @@ USO:
 """
 
 import os
+import sys
 import json
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'agents'))
 
 import supervisor_agent as supervisore
 import anthropic

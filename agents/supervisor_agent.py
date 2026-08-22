@@ -224,9 +224,35 @@ ESEGUI QUESTO CONTROLLO per ciascun mock-up analizzato da Agent 3:
 6. TIPO DI GIUNTO: il tipo di giunto (BW, BW parziale penetrazione, FW,
    ecc.) dichiarato nel mock-up e' coerente con quello qualificato dal WPS?
 
+REGOLA NON DEROGABILE - PROCESSO/POSIZIONE NON DICHIARATI:
+Se il processo di saldatura e/o la posizione di saldatura non sono
+dichiarati esplicitamente nel report mock-up (anche se desumibili dal
+contesto), i flag "processo_coerente"/"posizione_coerente" restano
+SEMPRE null (mai true), e la NC risultante e' SEMPRE di severita'
+APPUNTO (mai STOP) - e' una richiesta di integrazione documentale, non
+un mismatch di variabile essenziale. Una sola NC APPUNTO per variabile
+mancante, elencando tutti i mock-up coinvolti; se mancano entrambe, due
+NC APPUNTO separate.
+
 REGOLE DI SEVERITA':
-- WPS citato nel mock-up non trovato tra i documenti caricati -> NC STOP:
-  welding book incompleto, impossibile verificare la copertura del giunto.
+- WPS ASSENTE (campo N.A., nessun riferimento citato nel mock-up) -> tutti i
+  flag (materiale/spessore/processo/posizione/giunto) restano null, nessuna
+  verifica orientativa contro WPQR dedotte dal contesto. NC STOP.
+- WPS citato nel mock-up non trovato tra i documenti caricati -> valuta se esiste
+  UNA CORRISPONDENZA TECNICA con altra WPS effettivamente presente nel welding book
+  (stesso grado/gruppo materiale, stesso range di spessore, stesso tipo di giunto
+  qualificato compatibile con quanto misurato/dichiarato nel mock-up):
+  - Se esiste una WPS nel welding book i cui parametri tecnici corrispondono a
+    quanto riportato nel mock-up (anche se la denominazione citata nel mock-up non
+    coincide testualmente) -> NC APPUNTO, non STOP: richiedi al CS conferma/
+    integrazione documentale della corrispondenza tra la denominazione citata e la
+    WPS identificata per analogia tecnica.
+  - Se NESSUNA WPS del welding book risulta tecnicamente compatibile con quanto
+    riportato nel mock-up -> NC STOP: welding book incompleto, impossibile
+    verificare la copertura del giunto.
+  Questa distinzione e' NON DEROGABILE: non lasciare al giudizio discrezionale se
+  la sola assenza di corrispondenza nominale, in presenza di corrispondenza tecnica
+  verificabile, giustifichi uno STOP.
 - Una o piu' variabili essenziali (grado materiale, spessore, processo,
   posizione, giunto) FUORI dal range qualificato dal WPS -> NC STOP.
 - Una variabile essenziale non chiaramente dichiarata in uno dei due
@@ -304,7 +330,7 @@ def check_wps_vs_mockup(report_agent1, report_agent3, client, model):
         report_agent3_json=json.dumps(report_agent3, ensure_ascii=False, indent=2)
     )
 
-    risultato = chiama_claude_json(client, model, prompt, max_tokens=3000, codice_check="SUP1")
+    risultato = chiama_claude_json(client, model, prompt, max_tokens=9000, codice_check="SUP1")
     risultato["tool"] = "check_wps_vs_mockup"
     return risultato
 
@@ -476,6 +502,31 @@ REGOLE DI SEVERITA':
 - Se tutti i parametri verificabili sono coerenti -> nessuna non conformita'
   per quel WPQR.
 
+REGOLA DI GRANULARITA' - NON DEROGABILE:
+Se piu' WPQR condividono lo stesso identico problema di verificabilita' del
+range dimensionale (es. il certificato non riporta un valore esplicito di
+gola/spessore per una combinazione processo/gruppo materiale comune a piu'
+WPQR), NON generare una NC APPUNTO separata per ciascun WPQR. Accorpa TUTTI
+i WPQR con lo stesso problema di verificabilita' in UNA SOLA non conformita'
+APPUNTO, elencando nel campo "descrizione" tutti i WPQR interessati. Genera
+una NC APPUNTO separata solo se la ragione della non verificabilita' e'
+effettivamente diversa da caso a caso (es. un WPQR manca del tutto dal
+certificato, un altro ha solo un conflitto interno al certificato tra due
+documenti).
+
+VINCOLO NON DEROGABILE - CONFLITTO DOCUMENTALE INTERNO AL CERTIFICATO:
+se per un sottoinsieme di WPQR il confronto e' ostacolato da un conflitto
+documentale interno al certificato EN 15085 gia' segnalato da Agent 5 (una
+NC del report Agent 5, es. valori discordanti tra IIS CERT ed ECWRV per la
+stessa combinazione processo/gruppo/tipo giunto), questo e' SEMPRE una
+ragione di non verificabilita' distinta dalla generica assenza di un dato
+dimensionale nello scope - non e' materia di giudizio. Genera SEMPRE una
+NC APPUNTO separata dedicata al conflitto documentale, accorpando in essa
+solo i WPQR effettivamente coinvolti nello stesso conflitto specifico
+(stesso processo/gruppo/tipo giunto in conflitto). Non fondere mai questo
+motivo con una NC APPUNTO generica sull'assenza di range di gola/spessore,
+anche se entrambe riguardano formalmente "range dimensionale non
+verificabile" per gli stessi WPQR.
 Per ogni non conformita' rilevata, se emerge un conflitto diretto tra
 affermazioni dei due report (es. un valore dichiarato in un report
 contraddice un valore nell'altro), aggiungi il campo "conflitto_documentale":
@@ -530,7 +581,7 @@ def check_wpqr_vs_en15085(report_agent1, report_agent5, client, model):
         report_agent5_json=json.dumps(report_agent5, ensure_ascii=False, indent=2)
     )
 
-    risultato = chiama_claude_json(client, model, prompt, max_tokens=6000, codice_check="SUP2")
+    risultato = chiama_claude_json(client, model, prompt, max_tokens=9000, codice_check="SUP2")
     risultato["tool"] = "check_wpqr_vs_en15085"
     return risultato
 
@@ -684,7 +735,7 @@ def check_spessore_materiale(report_agent1, report_agent3, report_agent4, client
         report_agent4_json=json.dumps(report_agent4, ensure_ascii=False, indent=2)
     )
 
-    risultato = chiama_claude_json(client, model, prompt, max_tokens=3000, codice_check="SUP3")
+    risultato = chiama_claude_json(client, model, prompt, max_tokens=9000, codice_check="SUP3")
     risultato["tool"] = "check_spessore_materiale"
     return risultato
 

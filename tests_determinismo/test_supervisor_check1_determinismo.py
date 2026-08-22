@@ -8,6 +8,16 @@ il Supervisore dal resto della pipeline.
 Percorso consigliato: C:/Users/angma/Desktop/weldaim/agents/test_supervisor_check1_determinismo.py
 (stessa cartella di app.py, supervisor_agent.py e degli altri test)
 
+AGGIORNAMENTO 2026-08-20:
+Il confronto delle non conformita' NON avviene piu' per "codice" (SUP1-01,
+SUP1-02, ...). Il modello puo' rinumerare le stesse NC in ordine diverso
+tra un run e l'altro (stesso identikit di non conformita', codice diverso),
+generando falsi "DIVERSO" nel confronto posizionale. Il confronto ora si
+basa sul CONTENUTO: per ciascuna NC si estrae l'insieme dei nomi mock-up
+citati esplicitamente nella descrizione (i nomi file sono sempre riportati
+in modo letterale dal modello) e si confronta severita' + insieme mock-up
+coinvolti, indipendentemente dal codice assegnato o dall'ordine.
+
 PERCHE' QUESTO TEST (2026-08-15, seguito del test su check_spessore_materiale):
 Stesso protocollo diagnosi-prima applicato ieri a CHECK3. Qui non abbiamo
 ancora un sospetto specifico come lo scarto macrografico di CHECK3 - questo
@@ -32,7 +42,9 @@ COSA FA QUESTO SCRIPT:
 3. Confronta:
    a) i 6 flag booleani di mockup_analizzati per ciascun mock-up (nome
       usato come chiave di confronto)
-   b) le non conformita' prodotte: codici e severita'
+   b) le non conformita' prodotte: severita' + insieme dei mock-up
+      coinvolti (confronto per contenuto, non per codice posizionale)
+   c) l'esito complessivo (GO/ATTENZIONE/STOP)
 
 ATTENZIONE - PREREQUISITO: questo script NON rilancia gli agenti. Deve
 esistere report_agents/report_agent1.json e report_agent3.json validi
@@ -48,7 +60,10 @@ USO:
 """
 
 import os
+import sys
 import json
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'agents'))
 
 import supervisor_agent as supervisore
 import anthropic
@@ -88,19 +103,39 @@ def riassumi_mockup_analizzati(risultato_check):
     return riassunto
 
 
-def riassumi_non_conformita(risultato_check):
-    """Estrae {codice: severita} da un risultato di check_wps_vs_mockup."""
-    riassunto = {}
+def estrai_nomi_mockup_noti(risultato_check):
+    """Ritorna la lista dei nomi file mock-up presenti in mockup_analizzati (chiave per il matching testuale)."""
+    return [
+        m.get("mockup", "")
+        for m in (risultato_check or {}).get("mockup_analizzati", [])
+        if m.get("mockup")
+    ]
+
+
+def riassumi_non_conformita_per_contenuto(risultato_check, nomi_mockup_noti):
+    """
+    Costruisce un multiset di non conformita' basato sul CONTENUTO, non sul
+    codice posizionale (SUP1-NN). Per ciascuna NC si cerca, all'interno del
+    testo di 'descrizione', quali nomi mock-up noti sono citati letteralmente.
+    La chiave di confronto e' (severita, frozenset dei mock-up citati).
+    Questo rende il confronto insensibile al fatto che il modello numeri
+    (SUP1-04 vs SUP1-05) le stesse NC in ordine diverso tra un run e l'altro.
+    """
+    contatore = {}
     for nc in (risultato_check or {}).get("non_conformita", []):
-        codice = nc.get("codice", "SENZA-CODICE")
+        descrizione = nc.get("descrizione", "")
         severita = nc.get("severita", "?")
-        riassunto[codice] = severita
-    return riassunto
+        mockup_citati = frozenset(
+            nome for nome in nomi_mockup_noti if nome and nome in descrizione
+        )
+        chiave = (severita, mockup_citati)
+        contatore[chiave] = contatore.get(chiave, 0) + 1
+    return contatore
 
 
 def confronta_dizionari(run_a, run_b, etichetta):
     """Stampa un confronto leggibile tra due dizionari chiave->valore e ritorna il numero di differenze."""
-    tutte_chiavi = sorted(set(run_a.keys()) | set(run_b.keys()))
+    tutte_chiavi = sorted(set(run_a.keys()) | set(run_b.keys()), key=lambda k: str(k))
     differenze = 0
     print(f"\n  --- {etichetta} ---")
     if not tutte_chiavi:
@@ -115,6 +150,35 @@ def confronta_dizionari(run_a, run_b, etichetta):
         print(f"  [{stato}] {chiave}")
         print(f"      run 1: {val_a}")
         print(f"      run 2: {val_b}")
+    print(f"\n  Totale differenze su {etichetta}: {differenze}/{len(tutte_chiavi)}")
+    return differenze
+
+
+def confronta_nc_per_contenuto(run_a, run_b, etichetta):
+    """
+    Confronta due multiset di NC (chiave = severita + mock-up coinvolti).
+    A differenza di confronta_dizionari, qui la chiave e' una tupla
+    (severita, frozenset) quindi la stampa richiede un adattamento minimo.
+    """
+    tutte_chiavi = sorted(
+        set(run_a.keys()) | set(run_b.keys()),
+        key=lambda k: (k[0], sorted(k[1]))
+    )
+    differenze = 0
+    print(f"\n  --- {etichetta} ---")
+    if not tutte_chiavi:
+        print("  (nessuna NC in nessuno dei due run)")
+        return 0
+    for chiave in tutte_chiavi:
+        severita, mockup_set = chiave
+        conteggio_a = run_a.get(chiave, 0)
+        conteggio_b = run_b.get(chiave, 0)
+        stato = "OK" if conteggio_a == conteggio_b else "DIVERSO"
+        if stato == "DIVERSO":
+            differenze += 1
+        mockup_str = ", ".join(sorted(mockup_set)) if mockup_set else "(nessun mock-up riconosciuto nel testo)"
+        print(f"  [{stato}] severita={severita}  mock-up={mockup_str}")
+        print(f"      run 1: {conteggio_a} occorrenza/e   run 2: {conteggio_b} occorrenza/e")
     print(f"\n  Totale differenze su {etichetta}: {differenze}/{len(tutte_chiavi)}")
     return differenze
 
@@ -164,9 +228,18 @@ def main():
         f"mockup_analizzati (ordine campi: {', '.join(_CAMPI_BOOLEANI_MOCKUP)})"
     )
 
-    riassunto_nc_1 = riassumi_non_conformita(risultato_run1)
-    riassunto_nc_2 = riassumi_non_conformita(risultato_run2)
-    diff_nc = confronta_dizionari(riassunto_nc_1, riassunto_nc_2, "non_conformita (codice -> severita)")
+    # Nomi mock-up noti: unione tra i due run, per riconoscere le citazioni
+    # testuali nelle descrizioni delle NC anche se un run ne cita uno in piu'/meno.
+    nomi_mockup_noti = sorted(set(
+        estrai_nomi_mockup_noti(risultato_run1) + estrai_nomi_mockup_noti(risultato_run2)
+    ))
+
+    riassunto_nc_1 = riassumi_non_conformita_per_contenuto(risultato_run1, nomi_mockup_noti)
+    riassunto_nc_2 = riassumi_non_conformita_per_contenuto(risultato_run2, nomi_mockup_noti)
+    diff_nc = confronta_nc_per_contenuto(
+        riassunto_nc_1, riassunto_nc_2,
+        "non_conformita (severita' + mock-up coinvolti, indipendente dal codice)"
+    )
 
     diff_esito = 1 if esito1 != esito2 else 0
 
@@ -183,7 +256,9 @@ def main():
             print("     il modello valuta diversamente la stessa coerenza WPS/mock-up")
             print("     a parita' di dati in ingresso.")
         if diff_nc > 0:
-            print(f"  -> {diff_nc} divergenza/e nelle non conformita' finali (codice/severita').")
+            print(f"  -> {diff_nc} divergenza/e nelle non conformita' finali (per contenuto,")
+            print("     non per codice: quindi e' variabilita' reale, non un artefatto")
+            print("     di rinumerazione).")
         print("  Prossimo passo: esaminare PROMPT_CHECK1 per individuare quale")
         print("  criterio lascia margine discrezionale al modello (stesso approccio")
         print("  gia' usato per rendere non derogabile la regola dello scarto")
@@ -193,3 +268,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

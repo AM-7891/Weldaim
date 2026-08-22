@@ -47,9 +47,12 @@ legge direttamente da disco come fa l'esecuzione diretta degli altri agenti.
 """
 
 import os
+import sys
 import re
 import json
 import anthropic
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'agents'))
 
 import agent_wps_wpqr as agente1
 import agent_mockup_vt as agente3
